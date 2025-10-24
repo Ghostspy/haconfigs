@@ -1,4 +1,7 @@
 core
-*.log
+*.log*
 *.db*
 secrets.yaml
+.cloud
+.storage
+

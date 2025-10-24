@@ -77,10 +77,10 @@
           "signal_strength___": "Signal Strength"
         },
         "entity_data": {
-          "power___": 188,
-          "voltage___": 26.77,
-          "current___": 7.1,
-          "yield_today___": 2020,
+          "power___": 201,
+          "voltage___": 26.78,
+          "current___": 7.7,
+          "yield_today___": 2060,
           "operation_mode___": "float",
           "signal_strength___": -74
         }
@@ -148,11 +148,11 @@
         },
         "entity_data": {
           "voltage___": 26.8,
-          "current___": 0.38,
+          "current___": 1.09,
           "battery___": 100.0,
           "time_remaining___": null,
           "aux_mode___": "disabled",
-          "signal_strength___": -71
+          "signal_strength___": -67
         }
       }
     },
