@@ -1,3 +1,4 @@
 core
 *.log
 *.db*
+secrets.yaml
