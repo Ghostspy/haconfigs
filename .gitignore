@@ -4,4 +4,4 @@ core
 secrets.yaml
 .cloud
 .storage
-
+.ha_run.lock
