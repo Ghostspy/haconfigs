@@ -1,0 +1,152 @@
+{
+  "version": 1,
+  "minor_version": 8,
+  "key": "core.area_registry",
+  "data": {
+    "areas": [
+      {
+        "aliases": [],
+        "floor_id": null,
+        "humidity_entity_id": null,
+        "icon": null,
+        "id": "living_room",
+        "labels": [],
+        "name": "Living Room",
+        "picture": null,
+        "temperature_entity_id": null,
+        "created_at": "1970-01-01T00:00:00+00:00",
+        "modified_at": "1970-01-01T00:00:00+00:00"
+      },
+      {
+        "aliases": [],
+        "floor_id": null,
+        "humidity_entity_id": null,
+        "icon": null,
+        "id": "kitchen",
+        "labels": [],
+        "name": "Kitchen",
+        "picture": null,
+        "temperature_entity_id": null,
+        "created_at": "1970-01-01T00:00:00+00:00",
+        "modified_at": "1970-01-01T00:00:00+00:00"
+      },
+      {
+        "aliases": [],
+        "floor_id": null,
+        "humidity_entity_id": null,
+        "icon": null,
+        "id": "bedroom",
+        "labels": [],
+        "name": "Bedroom",
+        "picture": null,
+        "temperature_entity_id": null,
+        "created_at": "1970-01-01T00:00:00+00:00",
+        "modified_at": "1970-01-01T00:00:00+00:00"
+      },
+      {
+        "aliases": [],
+        "floor_id": null,
+        "humidity_entity_id": null,
+        "icon": null,
+        "id": "extra_bedroom",
+        "labels": [],
+        "name": "Extra Bedroom",
+        "picture": null,
+        "temperature_entity_id": null,
+        "created_at": "1970-01-01T00:00:00+00:00",
+        "modified_at": "1970-01-01T00:00:00+00:00"
+      },
+      {
+        "aliases": [],
+        "floor_id": null,
+        "humidity_entity_id": null,
+        "icon": null,
+        "id": "basement",
+        "labels": [],
+        "name": "Basement",
+        "picture": null,
+        "temperature_entity_id": null,
+        "created_at": "1970-01-01T00:00:00+00:00",
+        "modified_at": "1970-01-01T00:00:00+00:00"
+      },
+      {
+        "aliases": [],
+        "floor_id": null,
+        "humidity_entity_id": null,
+        "icon": null,
+        "id": "master_bedroom",
+        "labels": [],
+        "name": "Master Bedroom",
+        "picture": null,
+        "temperature_entity_id": null,
+        "created_at": "1970-01-01T00:00:00+00:00",
+        "modified_at": "1970-01-01T00:00:00+00:00"
+      },
+      {
+        "aliases": [],
+        "floor_id": null,
+        "humidity_entity_id": null,
+        "icon": null,
+        "id": "outside",
+        "labels": [],
+        "name": "Outside",
+        "picture": null,
+        "temperature_entity_id": null,
+        "created_at": "1970-01-01T00:00:00+00:00",
+        "modified_at": "1970-01-01T00:00:00+00:00"
+      },
+      {
+        "aliases": [],
+        "floor_id": null,
+        "humidity_entity_id": null,
+        "icon": "mdi:table-chair",
+        "id": "dining_room",
+        "labels": [],
+        "name": "Dining Room",
+        "picture": null,
+        "temperature_entity_id": null,
+        "created_at": "2024-09-12T00:43:27.555527+00:00",
+        "modified_at": "2024-09-12T00:43:27.555540+00:00"
+      },
+      {
+        "aliases": [],
+        "floor_id": null,
+        "humidity_entity_id": null,
+        "icon": null,
+        "id": "landing",
+        "labels": [],
+        "name": "Landing",
+        "picture": null,
+        "temperature_entity_id": null,
+        "created_at": "2024-09-17T09:26:06.294524+00:00",
+        "modified_at": "2024-09-17T09:26:06.294536+00:00"
+      },
+      {
+        "aliases": [],
+        "floor_id": null,
+        "humidity_entity_id": null,
+        "icon": "mdi:power",
+        "id": "power",
+        "labels": [],
+        "name": "Power",
+        "picture": null,
+        "temperature_entity_id": null,
+        "created_at": "2024-10-14T00:15:02.046758+00:00",
+        "modified_at": "2024-10-14T00:15:02.046765+00:00"
+      },
+      {
+        "aliases": [],
+        "floor_id": null,
+        "humidity_entity_id": null,
+        "icon": null,
+        "id": "backyard",
+        "labels": [],
+        "name": "Backyard",
+        "picture": null,
+        "temperature_entity_id": null,
+        "created_at": "2025-08-28T23:22:31.351226+00:00",
+        "modified_at": "2025-08-28T23:22:31.351232+00:00"
+      }
+    ]
+  }
+}

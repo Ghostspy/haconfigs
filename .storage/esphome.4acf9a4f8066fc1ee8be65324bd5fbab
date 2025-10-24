@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "minor_version": 1,
+  "key": "esphome.4acf9a4f8066fc1ee8be65324bd5fbab",
+  "data": {
+    "device_info": {
+      "uses_password": false,
+      "name": "office2-onair-node",
+      "friendly_name": "",
+      "mac_address": "30:83:98:B2:46:E6",
+      "compilation_time": "Aug 20 2023, 11:27:08",
+      "model": "nodemcuv2",
+      "manufacturer": "Espressif",
+      "has_deep_sleep": false,
+      "esphome_version": "2023.8.1",
+      "project_name": "",
+      "project_version": "",
+      "webserver_port": 0,
+      "voice_assistant_version": 0,
+      "legacy_bluetooth_proxy_version": 0,
+      "bluetooth_proxy_feature_flags": 0
+    },
+    "services": [],
+    "api_version": {
+      "major": 1,
+      "minor": 9
+    },
+    "sensor": [
+      {
+        "object_id": "wifi_signal_office_2_on-air_node",
+        "key": 4050520781,
+        "name": "WiFi Signal Office 2 On-Air Node",
+        "unique_id": "308398b246e6-wifisignal",
+        "disabled_by_default": false,
+        "icon": "",
+        "entity_category": 2,
+        "device_class": "signal_strength",
+        "unit_of_measurement": "dBm",
+        "accuracy_decimals": 0,
+        "force_update": false,
+        "state_class": 1,
+        "last_reset_type": 0
+      }
+    ],
+    "text_sensor": [
+      {
+        "object_id": "office_2_on-air_node_ip_address",
+        "key": 1100123129,
+        "name": "office 2 on-air node IP Address",
+        "unique_id": "308398b246e6-wifiinfo-ip",
+        "disabled_by_default": false,
+        "icon": "",
+        "entity_category": 2
+      }
+    ]
+  }
+}

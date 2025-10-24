@@ -1,0 +1,132 @@
+{
+  "version": 1,
+  "minor_version": 1,
+  "key": "esphome.a5063f29a8d552f3f7b688d550e8282a",
+  "data": {
+    "device_info": {
+      "uses_password": false,
+      "name": "esphome-relay",
+      "friendly_name": "ESPHome Relay",
+      "mac_address": "94:B9:7E:EA:84:58",
+      "compilation_time": "Oct 24 2025, 08:23:11",
+      "model": "nodemcu-32s",
+      "manufacturer": "Espressif",
+      "has_deep_sleep": false,
+      "esphome_version": "2025.10.3",
+      "project_name": "",
+      "project_version": "",
+      "webserver_port": 0,
+      "legacy_voice_assistant_version": 0,
+      "voice_assistant_feature_flags": 0,
+      "legacy_bluetooth_proxy_version": 0,
+      "bluetooth_proxy_feature_flags": 0,
+      "zwave_proxy_feature_flags": 0,
+      "zwave_home_id": 0,
+      "suggested_area": "",
+      "bluetooth_mac_address": "",
+      "api_encryption_supported": true,
+      "devices": [],
+      "areas": [],
+      "area": {
+        "area_id": 0,
+        "name": ""
+      }
+    },
+    "services": [],
+    "api_version": {
+      "major": 1,
+      "minor": 12
+    },
+    "update": [],
+    "switch": [
+      {
+        "object_id": "in1",
+        "key": 529034997,
+        "name": "IN1",
+        "disabled_by_default": false,
+        "icon": "",
+        "entity_category": 0,
+        "device_id": 0,
+        "assumed_state": false,
+        "device_class": ""
+      },
+      {
+        "object_id": "in2",
+        "key": 529034998,
+        "name": "IN2",
+        "disabled_by_default": false,
+        "icon": "",
+        "entity_category": 0,
+        "device_id": 0,
+        "assumed_state": false,
+        "device_class": ""
+      },
+      {
+        "object_id": "in3",
+        "key": 529034999,
+        "name": "IN3",
+        "disabled_by_default": false,
+        "icon": "",
+        "entity_category": 0,
+        "device_id": 0,
+        "assumed_state": false,
+        "device_class": ""
+      },
+      {
+        "object_id": "in4",
+        "key": 529034992,
+        "name": "IN4",
+        "disabled_by_default": false,
+        "icon": "",
+        "entity_category": 0,
+        "device_id": 0,
+        "assumed_state": false,
+        "device_class": ""
+      },
+      {
+        "object_id": "in5",
+        "key": 529034993,
+        "name": "IN5",
+        "disabled_by_default": false,
+        "icon": "",
+        "entity_category": 0,
+        "device_id": 0,
+        "assumed_state": false,
+        "device_class": ""
+      },
+      {
+        "object_id": "in6",
+        "key": 529034994,
+        "name": "IN6",
+        "disabled_by_default": false,
+        "icon": "",
+        "entity_category": 0,
+        "device_id": 0,
+        "assumed_state": false,
+        "device_class": ""
+      },
+      {
+        "object_id": "in7",
+        "key": 529034995,
+        "name": "IN7",
+        "disabled_by_default": false,
+        "icon": "",
+        "entity_category": 0,
+        "device_id": 0,
+        "assumed_state": false,
+        "device_class": ""
+      },
+      {
+        "object_id": "in8",
+        "key": 529035004,
+        "name": "IN8",
+        "disabled_by_default": false,
+        "icon": "",
+        "entity_category": 0,
+        "device_id": 0,
+        "assumed_state": false,
+        "device_class": ""
+      }
+    ]
+  }
+}

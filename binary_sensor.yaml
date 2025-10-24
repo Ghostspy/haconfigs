@@ -1,0 +1,7 @@
+# =============================
+#  Mailbox Battery Low
+# =============================
+- platform: template
+  sensors:
+    mailbox_battery_low:
+      value_template: "{{ states('sensor.mailbox_battery_mqtt')|float < 6.00 }}"

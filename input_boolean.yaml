@@ -1,0 +1,5 @@
+mail_delivered:
+  name: Mail Delivered
+  initial: off
+  icon: mdi:mailbox
+

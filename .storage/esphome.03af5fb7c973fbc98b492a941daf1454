@@ -1,0 +1,113 @@
+{
+  "version": 1,
+  "minor_version": 1,
+  "key": "esphome.03af5fb7c973fbc98b492a941daf1454",
+  "data": {
+    "device_info": {
+      "uses_password": false,
+      "name": "esp32s3-garage-door",
+      "friendly_name": "esp32s3-garage-door",
+      "mac_address": "48:27:E2:E6:F0:18",
+      "compilation_time": "Oct 24 2025, 08:01:56",
+      "model": "esp32-s3-devkitc-1",
+      "manufacturer": "Espressif",
+      "has_deep_sleep": false,
+      "esphome_version": "2025.10.3",
+      "project_name": "esphome.web",
+      "project_version": "1.0",
+      "webserver_port": 80,
+      "legacy_voice_assistant_version": 0,
+      "voice_assistant_feature_flags": 0,
+      "legacy_bluetooth_proxy_version": 0,
+      "bluetooth_proxy_feature_flags": 0,
+      "zwave_proxy_feature_flags": 0,
+      "zwave_home_id": 0,
+      "suggested_area": "",
+      "bluetooth_mac_address": "",
+      "api_encryption_supported": true,
+      "devices": [],
+      "areas": [],
+      "area": {
+        "area_id": 0,
+        "name": ""
+      }
+    },
+    "services": [],
+    "api_version": {
+      "major": 1,
+      "minor": 12
+    },
+    "sensor": [
+      {
+        "object_id": "wifi_signal",
+        "key": 799351157,
+        "name": "WiFi Signal",
+        "disabled_by_default": false,
+        "icon": "",
+        "entity_category": 2,
+        "device_id": 0,
+        "device_class": "signal_strength",
+        "unit_of_measurement": "dBm",
+        "accuracy_decimals": 0,
+        "force_update": false,
+        "state_class": 1,
+        "legacy_last_reset_type": 0
+      }
+    ],
+    "text_sensor": [],
+    "binary_sensor": [
+      {
+        "object_id": "garage_door_is_jammed",
+        "key": 3146273801,
+        "name": "Garage Door Is Jammed",
+        "disabled_by_default": false,
+        "icon": "",
+        "entity_category": 0,
+        "device_id": 0,
+        "device_class": "problem",
+        "is_status_binary_sensor": false
+      },
+      {
+        "object_id": "garage_door_is_open",
+        "key": 2401611691,
+        "name": "Garage Door Is Open",
+        "disabled_by_default": false,
+        "icon": "",
+        "entity_category": 0,
+        "device_id": 0,
+        "device_class": "garage_door",
+        "is_status_binary_sensor": false
+      }
+    ],
+    "switch": [
+      {
+        "object_id": "virtual_lock",
+        "key": 1871440152,
+        "name": "Virtual Lock",
+        "disabled_by_default": false,
+        "icon": "",
+        "entity_category": 0,
+        "device_id": 0,
+        "assumed_state": false,
+        "device_class": ""
+      }
+    ],
+    "update": [],
+    "cover": [
+      {
+        "object_id": "garage_door",
+        "key": 1402501725,
+        "name": "Garage Door",
+        "disabled_by_default": false,
+        "icon": "",
+        "entity_category": 0,
+        "device_id": 0,
+        "assumed_state": false,
+        "supports_stop": true,
+        "supports_position": false,
+        "supports_tilt": false,
+        "device_class": "garage"
+      }
+    ]
+  }
+}

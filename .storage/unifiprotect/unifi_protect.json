@@ -1,0 +1,21 @@
+{
+  "sessions": {
+    "d3550e23c2b96c8633ac9c93a28f066a3b60c1c30777e2d9919c16eed16cee79": {
+      "metadata": {
+        "expires": "Sat, 15 Nov 2025 13:57:34 GMT",
+        "path": "/",
+        "comment": "",
+        "domain": "",
+        "max-age": "",
+        "secure": true,
+        "httponly": true,
+        "version": "",
+        "samesite": "none",
+        "partitioned": true
+      },
+      "cookiename": "TOKEN",
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjMjU3ODY1Mi04MTI1LTRhYzUtOGVjYi03MWRlMzQ2ZjRmZjMiLCJwYXNzd29yZFJldmlzaW9uIjoxNzU1MzUzMDIyLCJpc1JlbWVtYmVyZWQiOnRydWUsImNzcmZUb2tlbiI6IjhhNzU2M2FhLWZhNjUtNGNmYi04NmJiLWVjODEwYWJmZDg1MiIsImlhdCI6MTc2MDYyMzA1NCwiZXhwIjoxNzYzMjE1MDU0LCJqdGkiOiI4MTAzNTM3Ni03ZTcwLTRkMWItYmIxOC03N2Y1OGU4NWZiYmIifQ.eaRsFpkz-iRJrZ46Vu1vIzhe0V-uS_p3hfldxSkDg9E",
+      "csrf": "8a7563aa-fa65-4cfb-86bb-ec810abfd852"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "minor_version": 1,
+  "key": "auth_provider.homeassistant",
+  "data": {
+    "users": [
+      {
+        "username": "ghost",
+        "password": "JDJiJDEyJHoxVDJBSkczWml1bFVEY2pPenliT3VXTDZXRklINTNHYjF3QzFCSGFPaFZ6L2FSenc2RjBH"
+      },
+      {
+        "username": "dakboard",
+        "password": "JDJiJDEyJERLeFRxdnFtWS8zc0FkeEFNYXZqaS5IaTdLejM1OGNMbHQyOExpcy9OMWZCVS9KZi5tajdh"
+      }
+    ]
+  }
+}

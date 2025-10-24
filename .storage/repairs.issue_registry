@@ -1,0 +1,163 @@
+{
+  "version": 1,
+  "minor_version": 2,
+  "key": "repairs.issue_registry",
+  "data": {
+    "issues": [
+      {
+        "created": "2023-07-23T16:29:07.046102+00:00",
+        "dismissed_version": null,
+        "domain": "hassio",
+        "is_persistent": false,
+        "issue_id": "unsupported_system_cgroup_version"
+      },
+      {
+        "created": "2023-08-09T02:29:26.849196+00:00",
+        "dismissed_version": "2023.8.1",
+        "domain": "hassio",
+        "is_persistent": false,
+        "issue_id": "unhealthy_system_privileged"
+      },
+      {
+        "created": "2024-04-02T15:17:22.230350+00:00",
+        "dismissed_version": null,
+        "domain": "hassio",
+        "is_persistent": false,
+        "issue_id": "f0063c022d0240da87221cad86540571"
+      },
+      {
+        "created": "2024-06-08T18:29:30.595078+00:00",
+        "dismissed_version": "2024.6.1",
+        "domain": "homeassistant",
+        "is_persistent": false,
+        "issue_id": "platform_integration_no_support_sensor_mqtt"
+      },
+      {
+        "created": "2024-09-01T16:04:16.317397+00:00",
+        "dismissed_version": null,
+        "domain": "hacs",
+        "is_persistent": false,
+        "issue_id": "restart_required_643579135_tags/1.7.1"
+      },
+      {
+        "created": "2024-09-05T19:09:25.942591+00:00",
+        "dismissed_version": null,
+        "domain": "hacs",
+        "is_persistent": false,
+        "issue_id": "restart_required_139664351_tags/v4.12.12"
+      },
+      {
+        "created": "2024-09-23T22:52:02.955956+00:00",
+        "dismissed_version": null,
+        "domain": "hacs",
+        "is_persistent": false,
+        "issue_id": "restart_required_157618389_tags/v2.2.2"
+      },
+      {
+        "created": "2024-10-03T17:32:38.726952+00:00",
+        "dismissed_version": null,
+        "domain": "hacs",
+        "is_persistent": false,
+        "issue_id": "restart_required_139664351_tags/v4.13.3"
+      },
+      {
+        "created": "2024-10-19T14:50:02.399448+00:00",
+        "dismissed_version": null,
+        "domain": "hacs",
+        "is_persistent": false,
+        "issue_id": "restart_required_583665628_tags/a8eee7c"
+      },
+      {
+        "created": "2024-10-31T19:38:17.681792+00:00",
+        "dismissed_version": null,
+        "domain": "hacs",
+        "is_persistent": false,
+        "issue_id": "restart_required_139664351_tags/v4.13.6"
+      },
+      {
+        "created": "2024-11-11T11:38:20.615780+00:00",
+        "dismissed_version": "2024.11.1",
+        "domain": "hassio",
+        "is_persistent": false,
+        "issue_id": "unhealthy_system_supervisor"
+      },
+      {
+        "created": "2024-11-30T00:36:19.868383+00:00",
+        "dismissed_version": null,
+        "domain": "hacs",
+        "is_persistent": false,
+        "issue_id": "restart_required_169467285_tags/v2.1.9"
+      },
+      {
+        "created": "2024-12-11T12:28:57.436833+00:00",
+        "dismissed_version": null,
+        "domain": "hacs",
+        "is_persistent": false,
+        "issue_id": "restart_required_139664351_tags/v5.0.3"
+      },
+      {
+        "created": "2024-12-11T12:29:04.745247+00:00",
+        "dismissed_version": null,
+        "domain": "hacs",
+        "is_persistent": false,
+        "issue_id": "restart_required_139664351_tags/v5.0.4"
+      },
+      {
+        "created": "2024-12-17T19:34:35.241635+00:00",
+        "dismissed_version": null,
+        "domain": "hacs",
+        "is_persistent": false,
+        "issue_id": "restart_required_139664351_tags/v5.1.0"
+      },
+      {
+        "created": "2025-01-28T01:27:22.392279+00:00",
+        "dismissed_version": null,
+        "domain": "hacs",
+        "is_persistent": false,
+        "issue_id": "restart_required_172733314_tags/2.0.4"
+      },
+      {
+        "created": "2025-04-13T23:35:42.945136+00:00",
+        "dismissed_version": null,
+        "domain": "homeassistant",
+        "is_persistent": false,
+        "issue_id": "config_entry_reauth_esphome_01J7E3JXC5EPESKBDS7ZHF9JH0"
+      },
+      {
+        "created": "2025-06-20T02:00:01.015093+00:00",
+        "dismissed_version": "2025.6.1",
+        "domain": "cloud",
+        "is_persistent": false,
+        "issue_id": "subscription_expired_2025-06-13 00:00:00+00:00"
+      },
+      {
+        "created": "2025-07-15T10:05:36.209917+00:00",
+        "dismissed_version": null,
+        "domain": "cloud",
+        "is_persistent": false,
+        "issue_id": "no_subscription_2026-06-20 00:00:00+00:00"
+      },
+      {
+        "created": "2025-10-18T16:02:40.197565+00:00",
+        "dismissed_version": null,
+        "domain": "hacs",
+        "is_persistent": false,
+        "issue_id": "restart_required_249381778_tags/v5.2.4"
+      },
+      {
+        "created": "2025-10-24T16:13:30.876051+00:00",
+        "dismissed_version": null,
+        "domain": "hacs",
+        "is_persistent": false,
+        "issue_id": "restart_required_717546529_tags/v4.1.10"
+      },
+      {
+        "created": "2025-10-24T17:01:54.571565+00:00",
+        "dismissed_version": "2025.10.3",
+        "domain": "automation",
+        "is_persistent": false,
+        "issue_id": "automation.morning_voice_briefing_validation_failed_schema"
+      }
+    ]
+  }
+}

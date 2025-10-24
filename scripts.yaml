@@ -1,0 +1,19 @@
+mail_delivery:
+  alias: Mail Delivered
+  sequence:
+    - service: input_boolean.turn_on
+      data:
+        entity_id: input_boolean.mail_delivered
+    - service: media_player.play_media
+      data_template:
+        entity_id: media_player.all_home_devices
+        media_content_id: >
+          {{ "http://192.168.1.179:8123/local/sounds/mail0" ~ (range(1, 6) | random) ~ ".mp3" }}
+        media_content_type: music
+
+mail_pickup:
+  alias: Mail Picked Up
+  sequence:
+    - service: input_boolean.turn_off
+      data:
+        entity_id: input_boolean.mail_delivered

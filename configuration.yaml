@@ -1,0 +1,156 @@
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+  extra_module_url:
+    - /hacsfiles/lovelace-card-mod/card-mod.js
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+input_boolean: !include input_boolean.yaml
+binary_sensor: !include binary_sensor.yaml
+sensor: !include sensor.yaml
+openhasp: !include openhasp.yaml
+
+logger:
+  default: warning
+  logs:
+    homeassistant.components.mqtt: debug
+    homeassistant.components.mqtt.sensor: debug
+
+template:
+  - sensor:
+      - name: "Battery Status"
+        state: >
+          {% set v = states('sensor.battery_voltage') | float %}
+          {% if v < 3.1 %}
+            Critical
+          {% elif v < 3.5 %}
+            Low
+          {% elif v < 3.9 %}
+            Medium
+          {% else %}
+            Full
+          {% endif %}
+        icon: >
+          {% set v = states('sensor.battery_voltage') | float %}
+          {% if v < 3.1 %}
+            mdi:battery-alert
+          {% elif v < 3.5 %}
+            mdi:battery-10            
+          {% elif v < 3.9 %}
+            mdi:battery-50
+          {% else %}
+            mdi:battery
+          {% endif %}
+        attributes:
+          icon_color: >
+            {% set v = states('sensor.battery_voltage') | float %}
+            {% if v < 3.1 %}
+              red
+            {% elif v < 3.5 %}
+              orange
+            {% elif v < 3.9 %}
+              yellow
+            {% else %}
+              green
+            {% endif %}
+      - name: "Case Temp Fahrenheit"
+        unit_of_measurement: "°F"
+        device_class: temperature
+        state_class: measurement
+        state: "{{ (states('sensor.case_temperature') | float * 1.8 + 32) | round(1) }}"
+
+my:
+
+zha_toolkit:
+  default: warning
+  logs:
+    custom_components.zha_toolkit: debug
+
+mqtt:
+  sensor:
+    # ===============================
+    # Waveshare Devices
+    # ===============================
+    - name: "Waveshare Battery Percent"
+      state_topic: "hasp/waveshare/state/p0b6.state"
+      unit_of_measurement: "%"
+      value_template: "{{ value | float | round(0) }}"
+    - name: "Waveshare2 Battery Percent"
+      state_topic: "hasp/waveshare2/state/p0b6.state"
+      unit_of_measurement: "%"
+      value_template: "{{ value | float | round(0) }}"
+
+    # ===============================
+    # Weather Station
+    # ===============================
+    - name: "Battery Voltage"
+      state_topic: "PriorLake/hardware/vBattery/"
+      unit_of_measurement: "V"
+      value_template: "{{ value | float }}"
+
+    - name: "Solar Voltage"
+      state_topic: "PriorLake/hardware/vSolar/"
+      unit_of_measurement: "V"
+      value_template: "{{ value | float }}"
+
+    - name: "Barometric Pressure"
+      state_topic: "PriorLake/sensors/imperial/pressure/"
+      unit_of_measurement: "inHg"
+      value_template: "{{ value | float }}"
+
+    - name: "Temperature"
+      state_topic: "PriorLake/sensors/imperial/temperature/"
+      unit_of_measurement: "°F"
+      value_template: "{{ value | float }}"
+
+    - name: "Wind Speed"
+      state_topic: "PriorLake/sensors/imperial/windSpeed/"
+      unit_of_measurement: "mph"
+      value_template: "{{ value | float }}"
+
+    - name: "Wind Speed Max"
+      state_topic: "PriorLake/sensors/imperial/windSpeedMax/"
+      unit_of_measurement: "mph"
+      value_template: "{{ value | float }}"
+
+    - name: "Rainfall 24h"
+      state_topic: "PriorLake/sensors/imperial/rainfall/rainfall24/"
+      unit_of_measurement: "in"
+      value_template: "{{ value | float }}"
+
+    - name: "Rainfall Last Hour"
+      state_topic: "PriorLake/sensors/imperial/rainfall/rainfall60m/"
+      unit_of_measurement: "in"
+      value_template: "{{ value | float }}"
+
+    - name: "Light Level"
+      state_topic: "PriorLake/sensors/lux/"
+      unit_of_measurement: "lx"
+      value_template: "{{ value | float }}"
+
+    - name: "Relative Humidity"
+      state_topic: "PriorLake/sensors/relHum/"
+      unit_of_measurement: "%"
+      value_template: "{{ value | float }}"
+
+    - name: "Wind Direction"
+      state_topic: "PriorLake/sensors/windCardinalDirection/"
+      value_template: "{{ value }}"
+
+    - name: "Low Battery Status"
+      state_topic: "PriorLake/hardware/lowBattery/"
+      value_template: "{{ value }}"
+
+    - name: "Charge Battery Status"
+      state_topic: "PriorLake/hardware/chargeStatusB/"
+      value_template: "{{ value }}"
+
+    - name: "Case Temperature"
+      state_topic: "PriorLake/hardware/caseTemperature/"
+      unit_of_measurement: "°C"
+      value_template: "{{ value | float }}"

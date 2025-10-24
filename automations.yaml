@@ -1,0 +1,185 @@
+- alias: Mailbox Activated
+  trigger:
+    platform: state
+    entity_id: binary_sensor.mailbox_sensor_status
+    from: "off"
+    to: "on"
+  mode: single
+  action:
+    - service: script.turn_on
+      data_template:
+        entity_id:
+          "{% if is_state('input_boolean.mail_delivered', 'off') %}\n  script.mail_delivery\n{%
+          else %}\n  script.mail_pickup\n{% endif %}\n"
+    - delay: 00:02:00
+    - service: homeassistant.update_entity
+      entity_id: binary_sensor.mailbox_battery_low
+  id: 959be1b64eb542e6b0515457acf90b4f
+- id: "1718243437745"
+  alias: Mailbox Battery Low
+  description: ""
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.mailbox_battery_low
+      from: "off"
+      to: "on"
+      for: 00:15:00
+  condition: []
+  action:
+    - service: notify.mobile_app_ghost_s_iphone_16
+      data:
+        message: Mailbox battery is low
+  mode: single
+- id: "1721401915446"
+  alias: WLED-EB On
+  description: ""
+  trigger:
+    - platform: time
+      at: 04:00:00
+  condition: []
+  action:
+    - metadata: {}
+      data: {}
+      action: light.turn_on
+      target:
+        entity_id: light.wled_eb
+  mode: single
+- id: "1726102693342"
+  alias: Lights-Out
+  description: ""
+  triggers:
+    - at: "22:00:00"
+      trigger: time
+  conditions: []
+  actions:
+    - action: switch.turn_off
+      metadata: {}
+      data: {}
+      target:
+        area_id:
+          - kitchen
+          - basement
+          - dining_room
+  mode: single
+- id: "1726519567397"
+  alias: Outside Lights On
+  description: ""
+  trigger:
+    - platform: sun
+      event: sunset
+      offset: 0
+  condition: []
+  action:
+    - action: switch.turn_on
+      metadata: {}
+      data: {}
+      target:
+        entity_id: switch.front_porch
+        device_id: 1c2997a6289237201262514d7c37ac80
+  mode: single
+- id: "1726519704682"
+  alias: Outside Lights Off
+  description: ""
+  trigger:
+    - platform: sun
+      event: sunrise
+      offset: 0
+  condition: []
+  action:
+    - action: switch.turn_off
+      metadata: {}
+      data: {}
+      target:
+        entity_id:
+          - switch.front_porch
+          - switch.outside_garage
+  mode: single
+- id: "1728384669360"
+  alias: Outsidie Lighs Sunset Off
+  description: ""
+  triggers:
+    - trigger: time
+      at: "21:30:00"
+  conditions: []
+  actions:
+    - action: switch.turn_off
+      data: {}
+      target:
+        device_id:
+          - ffdb699cbfc598b762c04fc3fe8b4ef9
+          - 1c2997a6289237201262514d7c37ac80
+  mode: single
+- id: "1728384919622"
+  alias: Oustide Lights Morning
+  description: ""
+  triggers:
+    - trigger: time
+      at: 06:00:00
+  conditions: []
+  actions:
+    - action: switch.turn_on
+      metadata: {}
+      data: {}
+      target:
+        entity_id: switch.front_porch
+        device_id: 1c2997a6289237201262514d7c37ac80
+  mode: single
+- id: "1729108336398"
+  alias: SpeedTest Update
+  description: ""
+  triggers:
+    - trigger: time_pattern
+      hours: /2
+  conditions: []
+  actions:
+    - action: homeassistant.update_entity
+      data:
+        entity_id:
+          - sensor.speedtest_download
+          - sensor.speedtest_upload
+          - sensor.speedtest_ping
+  mode: single
+- id: "1747390408504"
+  alias: Charger On
+  description: ""
+  triggers:
+    - trigger: sun
+      event: sunrise
+      offset: 0
+    - trigger: time_pattern
+      hours: /2
+      minutes: "0"
+      seconds: "0"
+  conditions:
+    - condition: numeric_state
+      entity_id: sensor.jk_bms_001_state_of_charge
+      below: 50
+    - condition: numeric_state
+      entity_id: sensor.jk_bms_jk_bms_002_state_of_charge
+      below: 50
+  actions:
+    - type: turn_on
+      device_id: 1f7d33ea303d1c29b295180ff78523ab
+      entity_id: 6f043caca6a4f87141ed8df12b7b3d71
+      domain: switch
+  mode: single
+- id: "1747391082947"
+  alias: Charger Off
+  description: ""
+  triggers:
+    - trigger: sun
+      event: sunset
+      offset: 0
+  conditions:
+    - condition: numeric_state
+      entity_id: sensor.jk_bms_001_state_of_charge
+      above: 95
+    - condition: numeric_state
+      entity_id: sensor.jk_bms_jk_bms_002_state_of_charge
+      above: 95
+  actions:
+    - type: turn_off
+      device_id: 1f7d33ea303d1c29b295180ff78523ab
+      entity_id: 6f043caca6a4f87141ed8df12b7b3d71
+      domain: switch
+  mode: single

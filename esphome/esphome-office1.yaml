@@ -1,0 +1,117 @@
+esphome:
+  name: office1-onair-node
+
+esp32:
+  board: nodemcu-32s
+  framework:
+    type: esp-idf
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "aAY0fYv5Avc9gqClXa4mY8OGxyTouxCPXxOO8QNFj8U="
+
+ota:
+  - platform: esphome
+    password: "L1ttl3greenm3n"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "office1-onair"
+    password: !secret ap_pw
+
+captive_portal:
+
+sensor:
+  - platform: wifi_signal
+    name: "WiFi Signal Office 1 On-Air Node"
+    update_interval: 30s
+    
+mqtt:
+  id: office1_onair_node           
+  broker: !secret mqtt_broker
+  username: !secret mqtt_un
+  password: !secret mqtt_pw
+  birth_message:
+    topic: office1/onair/status
+    payload: online
+  will_message:
+    topic: office1/onair/status
+    payload: offline
+  log_topic: office1/onair/log
+  on_message:
+    - topic: office1/onair/led
+      qos: 0
+      then:
+        - if:
+            condition:
+              lambda: 'return x == "on";'
+            then:
+              - light.turn_on: light_office1_onair_node_led01
+            else:
+              - light.turn_off: light_office1_onair_node_led01
+    - topic: office2/onair/led
+      qos: 0
+      then:
+        - if:
+            condition:
+              lambda: 'return x == "on";'
+            then:
+              - light.turn_on: light_office1_onair_node_led02
+            else:
+              - light.turn_off: light_office1_onair_node_led02
+
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: office 1 on-air node IP Address
+
+# switch & LEDs
+light:
+  - platform: binary
+    name: "office1-onair-node-led01"
+    id: light_office1_onair_node_led01
+    output: led01
+    internal: true
+  - platform: binary
+    name: "office1-onair-node-led02"
+    id: light_office1_onair_node_led02
+    output: led02
+    internal: true
+    
+binary_sensor:
+  - platform: gpio
+    pin: 
+      number: GPIO18
+      # inverted: true
+      mode: INPUT_PULLUP
+    name: "Office 1 On-Air switch"
+    id: "switch_office1_onair"
+    on_press:
+      - mqtt.publish:
+          topic: office1/onair/switch
+          payload: "on"
+      - logger.log: "Office  On-Air"
+    on_release:
+      - mqtt.publish:
+          topic: office1/onair/switch
+          payload: "off"
+      - logger.log: "Office  Off-Air"
+    internal: true
+    filters:
+      - delayed_on_off: 10ms
+
+output:
+  - platform: gpio
+    pin: GPIO19
+    id: led01
+  - platform: gpio
+    pin: GPIO21
+    id: led02

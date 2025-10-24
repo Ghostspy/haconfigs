@@ -1,0 +1,364 @@
+# CircuitSetup 6 Channel Energy Meter Main Board example config
+
+substitutions:
+# Change the disp_name to something you want  
+  disp_name: Energy Meter
+  friendly_name: CircuitSetup Energy Meter
+# Interval of how often the power is updated
+  update_time: 10s
+# Current Transformers:
+#  20A/25mA SCT-006: 11143
+#  30A/1V SCT-013-030: 8650
+#  50A/1V SCT-013-050: 15420
+#  50A/16.6mA SCT-010: 41334
+#  80A/26.6mA SCT-010: 41660
+#  100A/50ma SCT-013-000: 27518
+#  120A/40mA: SCT-016: 41787
+#  200A/100mA SCT-024: 27518
+#  200A/50mA SCT-024: 55036
+  current_cal: '27518'
+  current_cal_200: '55036'
+  current_cal_20: '11143'
+# Jameco 9VAC Transformer: 
+#  For meter versions: 
+#  >= v1.3: 7305
+  voltage_cal: '7305'
+
+esphome:
+  name: energy-meter
+  friendly_name: "${friendly_name}"
+  project:
+    name: "circuitsetup.6c-energy-meter-main"
+    version: 1.4.1
+
+esp32:
+  board: nodemcu-32s
+  framework:
+    type: esp-idf
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+captive_portal:
+
+esp32_improv:
+# Sets up Bluetooth LE to allow the user
+# to provision wifi credentials to the device.
+  authorizer: none
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "aAY0fYv5Avc9gqClXa4mY8OGxyTouxCPXxOO8QNFj8U="
+
+ota:
+  - platform: esphome
+
+dashboard_import:
+  package_import_url: github://circuitsetup/Expandable-6-Channel-ESP32-Energy-Meter/Software/ESPHome/6chan_energy_meter-1-add-on.yaml@master
+  import_full_config: true
+
+#web_server:
+ # port: 80
+
+spi:
+  clk_pin: 18
+  miso_pin: 19
+  mosi_pin: 23
+
+sensor:
+  - platform: wifi_signal
+    name: ${disp_name} WiFi
+    update_interval: 60s
+#IC1 Main
+  - platform: atm90e32
+    cs_pin: 5
+    phase_a:
+      voltage:
+        name: ${disp_name} Volts A
+        id: ic1Volts
+        accuracy_decimals: 1
+      current:
+        name: ${disp_name} CT1 Amps
+        id: ct1Amps
+# The max value for current that the meter can output is 65.535. If you expect to measure current over 65A, 
+# divide the gain_ct by 2 (120A CT) or 4 (200A CT) and multiply the current and power values by 2 or 4 by uncommenting the filter below
+        # filters:
+        #   - multiply: 4
+      power:
+        name: ${disp_name} CT1 Watts
+        id: ct1Watts
+        # filters:
+        #   - multiply: 4
+      gain_voltage: ${voltage_cal}
+      gain_ct: ${current_cal}
+    phase_b:
+      current:
+        name: ${disp_name} CT2 Amps
+        id: ct2Amps
+        # filters:
+        #   - multiply: 4        
+      power:
+        name: ${disp_name} CT2 Watts
+        id: ct2Watts
+        # filters:
+        #   - multiply: 4        
+      gain_voltage: ${voltage_cal}
+      gain_ct: ${current_cal}
+    phase_c:
+      current:
+        name: ${disp_name} CT3 Amps
+        id: ct3Amps
+      power:
+        name: ${disp_name} CT3 Watts
+        id: ct3Watts
+      gain_voltage: ${voltage_cal}
+      gain_ct: ${current_cal}
+    frequency:
+      name: ${disp_name} Freq A
+    line_frequency: 60Hz
+    gain_pga: 1X
+    update_interval: ${update_time}
+#IC2 Main
+  - platform: atm90e32
+    cs_pin: 4
+    phase_a:
+      current:
+        name: ${disp_name} CT4 Amps
+        id: ct4Amps
+      power:
+        name: ${disp_name} CT4 Watts
+        id: ct4Watts
+      gain_voltage: ${voltage_cal}
+      gain_ct: ${current_cal}
+    phase_b:
+      current:
+        name: ${disp_name} CT5 Amps
+        id: ct5Amps
+      power:
+        name: ${disp_name} CT5 Watts
+        id: ct5Watts
+      gain_voltage: ${voltage_cal}
+      gain_ct: ${current_cal}
+    phase_c:
+      current:
+        name: ${disp_name} CT6 Amps
+        id: ct6Amps
+      power:
+        name: ${disp_name} CT6 Watts
+        id: ct6Watts
+      gain_voltage: ${voltage_cal}
+      gain_ct: ${current_cal}
+    line_frequency: 60Hz
+    gain_pga: 1X
+    update_interval: ${update_time}
+#IC1 AddOn
+  - platform: atm90e32
+    cs_pin: 0
+    phase_a:
+      current:
+        name: ${disp_name} CT7 Amps 
+        id: ct7Amps
+      power:
+        name: ${disp_name} CT7 Watts
+        id: ct7Watts
+      gain_voltage: ${voltage_cal}
+      gain_ct: ${current_cal}
+    phase_b:
+      current:
+        name: ${disp_name} CT8 Amps
+        id: ct8Amps
+      power:
+        name: ${disp_name} CT8 Watts
+        id: ct8Watts
+      gain_voltage: ${voltage_cal}
+      gain_ct: ${current_cal}
+    phase_c:
+      current:
+        name: ${disp_name} EB Amps
+        id: ct9Amps
+      power:
+        name: ${disp_name} EB Watts
+        id: ct9Watts
+      gain_voltage: ${voltage_cal}
+      gain_ct: ${current_cal_200}
+    line_frequency: 60Hz
+    gain_pga: 1X
+    update_interval: ${update_time}
+#IC2 AddOn
+  - platform: atm90e32
+    cs_pin: 16
+    phase_a:
+      current:
+        name: ${disp_name} Office1 Amps
+        id: ct10Amps
+      power:
+        name: ${disp_name} Office1 Watts
+        id: ct10Watts
+      gain_voltage: ${voltage_cal}
+      gain_ct: ${current_cal}
+    phase_b:
+      current:
+        name: ${disp_name} Office2 Amps
+        id: ct11Amps
+      power:
+        name: ${disp_name} Office2 Watts
+        id: ct11Watts
+      gain_voltage: ${voltage_cal}
+      gain_ct: ${current_cal}
+    phase_c:
+      current:
+        name: ${disp_name} Dishwasher Amps
+        id: ct12Amps
+      power:
+        name: ${disp_name} Dishwasher Watts
+        id: ct12Watts
+      gain_voltage: ${voltage_cal}
+      gain_ct: ${current_cal}
+    line_frequency: 60Hz
+    gain_pga: 1X
+    update_interval: ${update_time}
+#IC1 AddOn 2
+  - platform: atm90e32
+    cs_pin: 27
+    phase_a:
+      power:
+        name: ${disp_name} CT13 Watts
+        id: ct13Watts
+      gain_voltage: ${voltage_cal}
+      gain_ct: ${current_cal}
+    phase_b:
+      power:
+        name: ${disp_name} CT14 Watts
+        id: ct14Watts
+      gain_voltage: ${voltage_cal}
+      gain_ct: ${current_cal}
+    phase_c:
+      power:
+        name: ${disp_name} CT15 Watts
+        id: ct15Watts
+      gain_voltage: ${voltage_cal}
+      gain_ct: ${current_cal}
+    line_frequency: 60Hz
+    gain_pga: 1X
+    update_interval: ${update_time}
+#IC2 AddOn 2
+  - platform: atm90e32
+    cs_pin: 17
+    phase_a:
+      power:
+        name: ${disp_name} CT16 Watts
+        id: ct16Watts
+      gain_voltage: ${voltage_cal}
+      gain_ct: ${current_cal}
+    phase_b:
+      power:
+        name: ${disp_name} CT17 Watts
+        id: ct17Watts
+      gain_voltage: ${voltage_cal}
+      gain_ct: ${current_cal}
+    phase_c:
+      power:
+        name: ${disp_name} CT18 Watts
+        id: ct18Watts
+      gain_voltage: ${voltage_cal}
+      gain_ct: ${current_cal}
+    line_frequency: 60Hz
+    gain_pga: 1X
+    update_interval: ${update_time}    
+    
+#Total Amps Main
+  - platform: template
+    name: ${disp_name} Total Amps Main
+    id: totalAmpsMain
+    lambda: return id(ct1Amps).state + id(ct2Amps).state + id(ct3Amps).state + id(ct4Amps).state + id(ct5Amps).state + id(ct6Amps).state ;
+    accuracy_decimals: 2
+    unit_of_measurement: A
+    device_class: current
+    update_interval: ${update_time}
+#Total Amps AddOn
+  - platform: template
+    name: ${disp_name} Total Amps Add-on
+    id: totalAmpsAddOn
+    lambda: return id(ct7Amps).state + id(ct8Amps).state + id(ct9Amps).state + id(ct10Amps).state + id(ct11Amps).state + id(ct12Amps).state ;
+    accuracy_decimals: 2
+    unit_of_measurement: A
+    device_class: current
+    update_interval: ${update_time}      
+#Total Amps
+  - platform: template
+    name: ${disp_name} Total Amps
+    id: totalAmps
+    lambda: return id(totalAmpsMain).state + id(totalAmpsAddOn).state ;
+    accuracy_decimals: 2
+    unit_of_measurement: A
+    device_class: current
+    update_interval: ${update_time}
+    
+#Total Watts Main
+  - platform: template
+    name: ${disp_name} Total Watts Main
+    id: totalWattsMain
+    lambda: return id(ct1Watts).state + id(ct2Watts).state + id(ct3Watts).state + id(ct4Watts).state + id(ct5Watts).state + id(ct6Watts).state ;
+    accuracy_decimals: 1
+    unit_of_measurement: W
+    device_class: power
+    update_interval: ${update_time}
+#Total Watts AddOn
+  - platform: template
+    name: ${disp_name} Total Watts Add-on
+    id: totalWattsAddOn
+    lambda: return id(ct7Watts).state + id(ct8Watts).state + id(ct9Watts).state + id(ct10Watts).state + id(ct11Watts).state + id(ct12Watts).state ;
+    accuracy_decimals: 1
+    unit_of_measurement: W
+    device_class: power
+    update_interval: ${update_time}
+#Total Watts
+  - platform: template
+    name: ${disp_name} Total Watts
+    id: totalWatts
+    lambda: return id(totalWattsMain).state + id(totalWattsAddOn).state ;
+    accuracy_decimals: 1
+    unit_of_measurement: W
+    device_class: power
+    update_interval: ${update_time}
+
+# Office 
+#Total Amps Office
+  - platform: template
+    name: ${disp_name} Total Amps Office
+    id: totalAmpsOffice
+    lambda: return id(ct10Amps).state + id(ct11Amps).state ;
+    accuracy_decimals: 2
+    unit_of_measurement: A
+    device_class: current
+    update_interval: ${update_time} 
+#Total Watts Office
+  - platform: template
+    name: ${disp_name} Total Watts Office
+    id: totalWattsOffice
+    lambda: return id(ct10Watts).state + id(ct11Watts).state ;
+    accuracy_decimals: 1
+    unit_of_measurement: W
+    device_class: power
+    update_interval: ${update_time}
+
+#kWh
+  - platform: total_daily_energy
+    name: ${disp_name} Total kWh
+    power_id: totalWatts
+    filters:
+      - multiply: 0.001
+    unit_of_measurement: kWh
+    device_class: energy
+    state_class: total_increasing
+switch:
+  - platform: restart
+    name: ${disp_name} Restart  
+time:
+  - platform: sntp
+    id: sntp_time   

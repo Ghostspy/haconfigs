@@ -1,0 +1,176 @@
+{
+  "version": 1,
+  "minor_version": 1,
+  "key": "bluetooth.passive_update_processor",
+  "data": {
+    "01K0QQ13RYTG2HGME3Y2W2282N": {
+      "01K0QQ13RYTG2HGME3Y2W2282N": {
+        "devices": {
+          "": {
+            "name": "MPPT001",
+            "manufacturer": "Victron",
+            "model": "SmartSolar MPPT 100|20 48V"
+          }
+        },
+        "entity_descriptions": {
+          "power___": {
+            "key": "power_W",
+            "device_class": "power",
+            "native_unit_of_measurement": "W",
+            "state_class": "measurement"
+          },
+          "voltage___": {
+            "key": "voltage_V",
+            "device_class": "voltage",
+            "native_unit_of_measurement": "V",
+            "state_class": "measurement"
+          },
+          "current___": {
+            "key": "current_A",
+            "device_class": "current",
+            "native_unit_of_measurement": "A",
+            "state_class": "measurement"
+          },
+          "yield_today___": {
+            "key": "yield_today",
+            "device_class": "energy",
+            "native_unit_of_measurement": "Wh",
+            "state_class": "total_increasing"
+          },
+          "operation_mode___": {
+            "key": "operation_mode",
+            "device_class": "enum",
+            "options": [
+              "off",
+              "low_power",
+              "fault",
+              "bulk",
+              "absorption",
+              "float",
+              "storage",
+              "equalize_manual",
+              "inverting",
+              "power_supply",
+              "starting_up",
+              "repeated_absorption",
+              "recondition",
+              "battery_safe",
+              "active",
+              "external_control",
+              "not_available"
+            ]
+          },
+          "signal_strength___": {
+            "key": "signal_strength_dBm",
+            "device_class": "signal_strength",
+            "entity_registry_enabled_default": false,
+            "native_unit_of_measurement": "dBm",
+            "state_class": "measurement"
+          }
+        },
+        "entity_names": {
+          "power___": "Power",
+          "voltage___": "Voltage",
+          "current___": "Current",
+          "yield_today___": "Yield Today",
+          "operation_mode___": "Operation Mode",
+          "signal_strength___": "Signal Strength"
+        },
+        "entity_data": {
+          "power___": 188,
+          "voltage___": 26.77,
+          "current___": 7.1,
+          "yield_today___": 2020,
+          "operation_mode___": "float",
+          "signal_strength___": -74
+        }
+      }
+    },
+    "01K0QSPE431N6C6RDDHNHTBTEY": {
+      "01K0QSPE431N6C6RDDHNHTBTEY": {
+        "devices": {
+          "": {
+            "name": "SmartShunt HQ2510VP7NV",
+            "manufacturer": "Victron",
+            "model": "<Unknown device: 49208>"
+          }
+        },
+        "entity_descriptions": {
+          "voltage___": {
+            "key": "voltage_V",
+            "device_class": "voltage",
+            "native_unit_of_measurement": "V",
+            "state_class": "measurement"
+          },
+          "current___": {
+            "key": "current_A",
+            "device_class": "current",
+            "native_unit_of_measurement": "A",
+            "state_class": "measurement"
+          },
+          "battery___": {
+            "key": "battery_%",
+            "device_class": "battery",
+            "native_unit_of_measurement": "%",
+            "state_class": "measurement"
+          },
+          "time_remaining___": {
+            "key": "time_remaining",
+            "device_class": "duration",
+            "native_unit_of_measurement": "min",
+            "state_class": "measurement"
+          },
+          "aux_mode___": {
+            "key": "aux_mode",
+            "device_class": "enum",
+            "options": [
+              "starter_voltage",
+              "midpoint_voltage",
+              "temperature",
+              "disabled"
+            ]
+          },
+          "signal_strength___": {
+            "key": "signal_strength_dBm",
+            "device_class": "signal_strength",
+            "entity_registry_enabled_default": false,
+            "native_unit_of_measurement": "dBm",
+            "state_class": "measurement"
+          }
+        },
+        "entity_names": {
+          "voltage___": "Voltage",
+          "current___": "Current",
+          "battery___": "Battery",
+          "time_remaining___": "Time remaining",
+          "aux_mode___": "Auxilliary Input Mode",
+          "signal_strength___": "Signal Strength"
+        },
+        "entity_data": {
+          "voltage___": 26.8,
+          "current___": 0.38,
+          "battery___": 100.0,
+          "time_remaining___": null,
+          "aux_mode___": "disabled",
+          "signal_strength___": -71
+        }
+      }
+    },
+    "01JWXVBTAYZTQ3H7V5XHCSH9PZ": {
+      "01JWXVBTAYZTQ3H7V5XHCSH9PZ": {
+        "devices": {},
+        "entity_descriptions": {},
+        "entity_names": {},
+        "entity_data": {}
+      }
+    },
+    "01JWXVFGFA0G02JN8GTK18E02S": {
+      "01JWXVFGFA0G02JN8GTK18E02S": {
+        "devices": {},
+        "entity_descriptions": {},
+        "entity_names": {},
+        "entity_data": {}
+      }
+    }
+  }
+}

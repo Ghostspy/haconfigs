@@ -1,0 +1,23 @@
+- id: '1699833253668'
+  name: Lights Out
+  entities:
+    switch.basement_entry:
+      friendly_name: Basement Entry
+      state: 'off'
+    switch.basement_hallway:
+      friendly_name: Basement Hallway
+      state: 'off'
+    switch.basement_kitchen:
+      friendly_name: Basement Kitchen
+      state: 'off'
+    switch.basement_light:
+      friendly_name: Basement Light
+      state: 'off'
+    switch.extra_bedroom_light:
+      friendly_name: Extra Bedroom Light
+      state: 'off'
+    switch.laundry_room_light:
+      friendly_name: Laundry room light
+      state: 'off'
+  metadata: {}
+  icon: mdi:light-switch-off
