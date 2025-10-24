@@ -1,5 +1,6 @@
 # Home Assistant
 core
+*core*
 .storage/
 .cloud/
 home-assistant.log*
