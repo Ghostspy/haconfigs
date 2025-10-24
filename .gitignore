@@ -1,7 +1,33 @@
-core
-*.log*
-*.db*
-secrets.yaml
-.cloud
-.storage
+# Home Assistant
+.storage/
+.cloud/
+home-assistant.log*
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+*.pyc
+__pycache__/
 .ha_run.lock
+home-assistant_v2.db*
+home-assistant_*.db*
+
+# ESPHome build cache
+esphome/.esphome/
+esphome/build/
+esphome/secrets.yaml
+
+# Audio/TTS cache
+tts/
+
+# Sensitive
+secrets.yaml
+.omv_cookies.json
+
+# Misc editors
+.vscode/
+.idea/
+.DS_Store
+

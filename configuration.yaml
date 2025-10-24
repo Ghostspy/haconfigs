@@ -21,6 +21,10 @@ logger:
     homeassistant.components.mqtt: debug
     homeassistant.components.mqtt.sensor: debug
 
+tts:
+  - platform: google_translate
+    language: en
+
 template:
   - sensor:
       - name: "Battery Status"

@@ -12,8 +12,9 @@
           "{% if is_state('input_boolean.mail_delivered', 'off') %}\n  script.mail_delivery\n{%
           else %}\n  script.mail_pickup\n{% endif %}\n"
     - delay: 00:02:00
-    - service: homeassistant.update_entity
-      entity_id: binary_sensor.mailbox_battery_low
+    - action: homeassistant.update_entity
+      target:
+        entity_id: binary_sensor.mailbox_battery_low
   id: 959be1b64eb542e6b0515457acf90b4f
 - id: "1718243437745"
   alias: Mailbox Battery Low
@@ -26,9 +27,11 @@
       for: 00:15:00
   condition: []
   action:
-    - service: notify.mobile_app_ghost_s_iphone_16
+    - action: notify.mobile_app_ghost_s_iphone_16
       data:
-        message: Mailbox battery is low
+        message: "Battery {{ states('sensor.mailbox_batt') }}%"
+        data:
+          message: Mailbox battery is low
   mode: single
 - id: "1721401915446"
   alias: WLED-EB On
@@ -182,4 +185,19 @@
       device_id: 1f7d33ea303d1c29b295180ff78523ab
       entity_id: 6f043caca6a4f87141ed8df12b7b3d71
       domain: switch
+  mode: single
+
+- id: morning_voice_briefing
+  alias: Morning Voice Briefing
+  trigger:
+    - platform: time
+      at: "07:00:00"
+  condition: []
+  action:
+    - action: tts.speak
+      target:
+        entity_id: tts.google_translate
+      data:
+        media_player_entity_id: media_player.basement_speaker
+        message: "Good morning!"
   mode: single
