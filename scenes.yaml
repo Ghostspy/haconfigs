@@ -19,5 +19,23 @@
     switch.laundry_room_light:
       friendly_name: Laundry room light
       state: 'off'
+    switch.cabinet_light:
+      friendly_name: Cabinet Light
+      state: 'off'
+    switch.dining_room_lights:
+      friendly_name: Dining Room Lights
+      state: 'off'
+    switch.island_lights:
+      friendly_name: Island Lights
+      state: 'off'
+    switch.kitchen_light:
+      friendly_name: Kitchen Light
+      state: 'off'
+    switch.main_hallway:
+      friendly_name: 'Main Hallway '
+      state: 'off'
+    switch.sink_light:
+      friendly_name: Sink Light
+      state: 'off'
   metadata: {}
   icon: mdi:light-switch-off

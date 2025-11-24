@@ -1,0 +1,160 @@
+blueprint:
+  name: UPS Battery and Status Monitor (NUT)
+  description: 'Monitors UPS battery, status, and self-test using NUT sensors.
+
+    Sends notifications when: - UPS status changes (based on status_data, human-readable
+    value used in message) - Battery charge drops by configurable step - Self-test
+    result is not "Done and passed"
+
+    Includes battery charge and voltage when relevant.
+
+    '
+  domain: automation
+  input:
+    battery_charge:
+      name: Battery Charge Sensor
+      description: 'Sensor showing UPS battery charge percentage (e.g. sensor.ups_battery_charge).
+
+        '
+      selector:
+        entity:
+          domain:
+          - sensor
+          integration: nut
+          reorder: false
+          multiple: false
+    battery_voltage:
+      name: Battery Voltage Sensor
+      description: 'Sensor showing UPS battery voltage (e.g. sensor.ups_battery_voltage).
+
+        '
+      selector:
+        entity:
+          domain:
+          - sensor
+          integration: nut
+          reorder: false
+          multiple: false
+    ups_status_data:
+      name: UPS Status Code Sensor (e.g. OL, OB)
+      description: 'Sensor with compact UPS status codes like OL (online), OB (on
+        battery), LB (low battery). Typically sensor.nutdev1_status_data. Used for
+        automation logic.
+
+        '
+      selector:
+        entity:
+          domain:
+          - sensor
+          integration: nut
+          reorder: false
+          multiple: false
+    ups_status:
+      name: UPS Human-Readable Status Sensor
+      description: 'Sensor with full text UPS status (e.g. "Online", "On Battery").
+        Typically sensor.nutdev1_status. Used for notifications.
+
+        '
+      selector:
+        entity:
+          domain:
+          - sensor
+          integration: nut
+          reorder: false
+          multiple: false
+    self_test_result:
+      name: Self-test Result Sensor
+      description: 'Sensor showing last UPS self-test result (e.g. "Done and passed",
+        "Failed").
+
+        '
+      selector:
+        entity:
+          domain:
+          - sensor
+          integration: nut
+          reorder: false
+          multiple: false
+    report_interval:
+      name: Battery Drop Notification Interval
+      description: 'Notify when battery drops by this percentage step (e.g., every
+        10% drop).
+
+        '
+      default: 10
+      selector:
+        number:
+          min: 1.0
+          max: 50.0
+          step: 1.0
+          mode: slider
+    notify_device:
+      name: Notification Device
+      description: 'Select the mobile device to receive notifications (via mobile_app
+        integration).
+
+        '
+      selector:
+        device:
+          filter:
+          - integration: mobile_app
+          multiple: false
+    message_prefix:
+      name: Notification Message Prefix
+      description: 'This will be prepended to all messages (optional).
+
+        '
+      default: 'UPS Monitor:'
+      selector:
+        text:
+          multiline: false
+          multiple: false
+  source_url: https://gist.github.com/007hacky007/9adc18b15cd1e7fb5fa5e5530625d65c/raw
+trigger:
+- platform: state
+  entity_id: !input ups_status_data
+- platform: state
+  entity_id: !input battery_charge
+- platform: state
+  entity_id: !input self_test_result
+variables:
+  battery_charge_entity: !input battery_charge
+  battery_voltage_entity: !input battery_voltage
+  ups_status_data_entity: !input ups_status_data
+  ups_status_readable_entity: !input ups_status
+  self_test_entity: !input self_test_result
+  report_interval: !input report_interval
+  message_prefix: !input message_prefix
+  current_charge: '{{ states(battery_charge_entity) | int(default=100) }}'
+  charge_mod: '{{ current_charge % report_interval }}'
+  battery_voltage_val: '{{ states(battery_voltage_entity) | float(default=0) }}'
+  test_result: '{{ states(self_test_entity) }}'
+  status_readable: '{{ states(ups_status_readable_entity) }}'
+condition:
+- condition: or
+  conditions:
+  - condition: template
+    value_template: '{{ trigger.entity_id == ups_status_data_entity }}'
+  - condition: template
+    value_template: '{{ trigger.entity_id == battery_charge_entity and current_charge
+      < 100 and charge_mod == 0 }}
+
+      '
+  - condition: template
+    value_template: '{{ trigger.entity_id == self_test_entity and test_result != ''Done
+      and passed'' }}
+
+      '
+action:
+- variables:
+    notify_message: "{% if trigger.entity_id == ups_status_data_entity %}\n  {{ message_prefix
+      }} UPS status changed: {{ status_readable }}\n{% elif trigger.entity_id == battery_charge_entity
+      %}\n  {{ message_prefix }} Battery at {{ current_charge }}%. Voltage: {{ battery_voltage_val
+      }} V\n{% elif trigger.entity_id == self_test_entity %}\n  {{ message_prefix
+      }} Self-test result: {{ test_result }}\n{% else %}\n  {{ message_prefix }} UPS
+      alert triggered.\n{% endif %}\n"
+- domain: mobile_app
+  type: notify
+  device_id: !input notify_device
+  message: '{{ notify_message }}'
+mode: queued

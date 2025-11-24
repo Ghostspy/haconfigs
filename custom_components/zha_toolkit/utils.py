@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import concurrent.futures
 import functools
 import json
 import logging
@@ -39,8 +40,33 @@ LOGGER = logging.getLogger(__name__)
 
 # pylint: disable=too-many-lines
 
-HA_VERSION = version("homeassistant")
-ZIGPY_VERSION = version("zigpy")
+# Create a thread pool executor
+_executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
+
+
+async def get_version_async(package: str) -> str:
+    """Asynchronous version of version check"""
+    loop = asyncio.get_event_loop()
+    try:
+        return await loop.run_in_executor(_executor, version, package)
+    except Exception as e:
+        LOGGER.error(f"Error getting {package} version: {e}")
+        return "0.0.0"
+
+
+async def get_ha_version() -> str:
+    """Get HA Version asynchronously"""
+    return await get_version_async("homeassistant")
+
+
+async def get_zigpy_version() -> str:
+    """Get zigpy Version asynchronously"""
+    return await get_version_async("zigpy")
+
+
+# Initialize versions
+HA_VERSION = asyncio.run(get_ha_version())
+ZIGPY_VERSION = asyncio.run(get_zigpy_version())
 
 if parse_version(HA_VERSION) < parse_version("2023.4"):
     # pylint: disable=ungrouped-imports
@@ -261,7 +287,7 @@ def get_radio(app):
     return None
 
 
-def get_radio_version(app):
+async def get_radio_version(app):
     # pylint: disable=R0911
     if hasattr(app, "_znp"):
         import zigpy_znp
@@ -269,14 +295,14 @@ def get_radio_version(app):
         if hasattr(zigpy_znp, "__version__"):
             return zigpy_znp.__version__
 
-        return version("zigpy_znp")
+        return await get_version_async("zigpy_znp")
     if hasattr(app, "_ezsp"):
         import bellows
 
         if hasattr(bellows, "__version__"):
             return bellows.__version__
 
-        return version("bellows")
+        return await get_version_async("bellows")
     if hasattr(app, "_api"):
         rt = get_radiotype(app)
         if rt == RadioType.DECONZ:
@@ -285,21 +311,21 @@ def get_radio_version(app):
             if hasattr(zigpy_deconz, "__version__"):
                 return zigpy_deconz.__version__
 
-            return version("zigpy_deconz")
+            return await get_version_async("zigpy_deconz")
         if rt == RadioType.ZIGATE:
             import zigpy_zigate
 
             if hasattr(zigpy_zigate, "__version__"):
                 return zigpy_zigate.__version__
 
-            return version("zigpy_zigate")
+            return await get_version_async("zigpy_zigate")
         if rt == RadioType.XBEE:
             import zigpy_xbee
 
             if hasattr(zigpy_xbee, "__version__"):
                 return zigpy_xbee.__version__
 
-            return version("zigpy_xbee")
+            return await get_version_async("zigpy_xbee")
 
         # if rt == RadioType.ZIGPY_CC:
         #     import zigpy_cc
@@ -600,7 +626,7 @@ def helper_save_json(file_name: str, data: typing.Any):
     save_json(file_name, data)
 
 
-def append_to_csvfile(
+async def append_to_csvfile(
     fields,
     subdir,
     fname,
@@ -625,9 +651,11 @@ def append_to_csvfile(
 
     import csv
 
-    with open(file_name, "w" if overwrite else "a", encoding="utf_8") as out:
+    async with aiofiles.open(
+        file_name, "w" if overwrite else "a", encoding="utf_8"
+    ) as out:
         writer = csv.writer(out)
-        writer.writerow(fields)
+        await writer.writerow(fields)
 
     if overwrite:
         LOGGER.debug(f"Wrote {desc} to '{file_name}'")
@@ -635,7 +663,7 @@ def append_to_csvfile(
         LOGGER.debug(f"Appended {desc} to '{file_name}'")
 
 
-def record_read_data(
+async def record_read_data(
     read_resp, cluster: zigpy.zcl.Cluster, params, listener=None
 ):
     """Record result from attr_write to CSV file if configured"""
@@ -678,7 +706,7 @@ def record_read_data(
         )
         fields.append(f"0x{attr_type:02X}" if attr_type is not None else "")
 
-        append_to_csvfile(
+        await append_to_csvfile(
             fields,
             "csv",
             params[p.CSV_FILE],

@@ -1,0 +1,108 @@
+blueprint:
+  name: 'Daikin: Resolve heat_cool by season + per-entity setpoints (EU)'
+  description: 'When any selected climate entity switches to "heat_cool", automatically
+    set a concrete mode based on season (Central Europe): HEAT in cold months (Sep–Apr),
+    COOL in hot months (May–Aug). Optionally only react when the current setpoint
+    ≈ a match value (default 25 °C). Apply per-entity target setpoints for the chosen
+    mode.
+
+    '
+  domain: automation
+  input:
+    climate_entities:
+      name: Climate entities (Daikin ACs)
+      description: 'Select the Daikin climate entities to monitor. When any goes to
+        "heat_cool", this automation will resolve it to heat/cool by season and apply
+        the appropriate setpoint.
+
+        '
+      selector:
+        entity:
+          domain:
+          - climate
+          multiple: true
+          reorder: false
+    require_setpoint_match:
+      name: Only react when setpoint matches (optional)
+      description: 'If enabled, the action will only run when the thermostat setpoint
+        is approximately the match value (default 25 °C). Disable to react to any
+        heat_cool switch.
+
+        '
+      default: false
+      selector:
+        boolean: {}
+    setpoint_match_value:
+      name: Setpoint match value (°C)
+      description: 'When "Only react when setpoint matches" is enabled, we check if
+        the current setpoint is approximately this value (±0.6 °C tolerance). Default
+        25 °C.
+
+        '
+      default: 25
+      selector:
+        number:
+          min: 5.0
+          max: 35.0
+          step: 0.5
+          unit_of_measurement: °C
+          mode: slider
+    entity_setpoints:
+      name: Per-entity setpoints (optional)
+      description: "Map each climate entity to the target setpoints for HEAT and COOL.
+        Example:\n  climate.living_room_ac:\n    heat: 22\n    cool: 24\n  climate.bedroom_ac:\n
+        \   heat: 21\n    cool: 25\nIf a value is omitted, defaults are heat=21, cool=25.
+        Leave empty to use defaults for all.\n"
+      default: {}
+      selector:
+        object:
+          multiple: false
+  source_url: https://gist.githubusercontent.com/007hacky007/8e341953b3d36625c82fcf90e1436a2c/raw/
+trigger:
+- platform: state
+  entity_id: !input climate_entities
+  to: heat_cool
+variables:
+  require_setpoint_match: !input require_setpoint_match
+  setpoint_match_value: !input setpoint_match_value
+  setpoints_map: !input entity_setpoints
+  target_mode_seasonal: "{% set m = now().month %} {% if m in [5,6,7,8] %}\n  cool\n{%
+    elif m in [9,10,11,12,1,2,3,4] %}\n  heat\n{% else %}\n  heat\n{% endif %}\n"
+  supported_modes: '{{ state_attr(trigger.entity_id, ''hvac_modes'') | default([])
+    }}'
+  mode_to_set: "{% set s = supported_modes %} {% set pick = target_mode_seasonal %}
+    {% if pick in s %}\n  {{ pick }}\n{% elif 'heat' in s %}\n  heat\n{% elif 'cool'
+    in s %}\n  cool\n{% else %}\n  {{ states(trigger.entity_id) }}\n{% endif %}\n"
+  heat_sp: '{% set d = setpoints_map.get(trigger.entity_id, {}) %} {{ d.get(''heat'',
+    21) }}
+
+    '
+  cool_sp: '{% set d = setpoints_map.get(trigger.entity_id, {}) %} {{ d.get(''cool'',
+    25) }}
+
+    '
+  temp_to_set: '{{ heat_sp if mode_to_set == ''heat'' else cool_sp }}'
+  current_setpoint: '{{ state_attr(trigger.entity_id, ''temperature'') | float(0)
+    }}'
+  match_value: '{{ setpoint_match_value | float(25) }}'
+  matches_required_sp: '{{ (current_setpoint - match_value) | abs < 0.6 }}'
+condition:
+- condition: or
+  conditions:
+  - condition: template
+    value_template: '{{ not require_setpoint_match }}'
+  - condition: template
+    value_template: '{{ matches_required_sp }}'
+action:
+- service: climate.set_hvac_mode
+  target:
+    entity_id: '{{ trigger.entity_id }}'
+  data:
+    hvac_mode: '{{ mode_to_set }}'
+- service: climate.set_temperature
+  target:
+    entity_id: '{{ trigger.entity_id }}'
+  data:
+    temperature: '{{ temp_to_set }}'
+mode: queued
+max: 10

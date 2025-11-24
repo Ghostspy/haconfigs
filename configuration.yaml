@@ -17,9 +17,9 @@ openhasp: !include openhasp.yaml
 
 logger:
   default: warning
-  logs:
-    homeassistant.components.mqtt: debug
-    homeassistant.components.mqtt.sensor: debug
+  # logs:
+  #   homeassistant.components.mqtt: debug
+  #   homeassistant.components.mqtt.sensor: debug
 
 tts:
   - platform: google_translate
@@ -30,22 +30,22 @@ template:
       - name: "Battery Status"
         state: >
           {% set v = states('sensor.battery_voltage') | float %}
-          {% if v < 3.1 %}
+          {% if v < 3.0 %}
             Critical
-          {% elif v < 3.5 %}
+          {% elif v < 3.3 %}
             Low
-          {% elif v < 3.9 %}
+          {% elif v < 3.7 %}
             Medium
           {% else %}
             Full
           {% endif %}
         icon: >
           {% set v = states('sensor.battery_voltage') | float %}
-          {% if v < 3.1 %}
+          {% if v < 3.0 %}
             mdi:battery-alert
-          {% elif v < 3.5 %}
+          {% elif v < 3.3 %}
             mdi:battery-10            
-          {% elif v < 3.9 %}
+          {% elif v < 3.7 %}
             mdi:battery-50
           {% else %}
             mdi:battery
@@ -53,11 +53,11 @@ template:
         attributes:
           icon_color: >
             {% set v = states('sensor.battery_voltage') | float %}
-            {% if v < 3.1 %}
+            {% if v < 3.0 %}
               red
-            {% elif v < 3.5 %}
+            {% elif v < 3.3 %}
               orange
-            {% elif v < 3.9 %}
+            {% elif v < 3.7 %}
               yellow
             {% else %}
               green
