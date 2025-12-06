@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import overload, Literal, cast, Any
+from typing import cast, Any
 from enum import StrEnum
 from homeassistant.helpers.entity import EntityDescription
 from homeassistant.helpers import entity_registry as er, device_registry as dr
@@ -10,7 +10,6 @@ from homeassistant.helpers.entity_platform import async_get_platforms
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from .const import (
-    XTDPCode,
     LOGGER,
     CROSS_CATEGORY_DEVICE_DESCRIPTOR,
     DOMAIN,
@@ -20,12 +19,10 @@ from .const import (
 import custom_components.xtend_tuya.multi_manager.shared.shared_classes as sc
 import custom_components.xtend_tuya.multi_manager.multi_manager as mm
 from .ha_tuya_integration.tuya_integration_imports import (
-    TuyaEnumTypeData,
-    TuyaIntegerTypeData,
-    TUYA_DPTYPE_MAPPING,
     TuyaEntity,
-    TuyaDPCode,
     TuyaDPType,
+    TuyaDPCodeWrapper,
+    TuyaDPCodeTypeInformationWrapper,
 )
 
 
@@ -47,7 +44,7 @@ class XTEntityDescriptorManager:
         multi_manager: mm.MultiManager,
         descriptor_type: type[Any] | None,
         platform: Platform | None,
-        key_fields: list[str] = ["key"],
+        key_fields: list[str | tuple[str, ...]] = ["key"],
     ) -> tuple[Any, Any]:
         include_descriptors = platform_descriptors
         exclude_descriptors = XTEntityDescriptorManager.get_empty_descriptor(
@@ -83,7 +80,7 @@ class XTEntityDescriptorManager:
 
     @staticmethod
     def get_category_keys(
-        category_content: Any, key_fields: list[str] = ["key"]
+        category_content: Any, key_fields: list[str | tuple[str, ...]] = ["key"]
     ) -> list[str]:
         return_list: list[str] = []
         if not category_content:
@@ -117,7 +114,8 @@ class XTEntityDescriptorManager:
 
     @staticmethod
     def get_category_dict(
-        category_content: Any, key_fields: list[str] = ["key"]
+        category_content: Any,
+        key_fields: list[str | tuple[str, ...]] = ["key"],
     ) -> dict[str, EntityDescription | None]:
         return_dict: dict[str, EntityDescription | None] = {}
         if not category_content:
@@ -151,17 +149,29 @@ class XTEntityDescriptorManager:
 
     @staticmethod
     def get_compound_key(
-        entity: EntityDescription, key_fields: list[str]
+        entity: EntityDescription,
+        key_fields: list[str | tuple[str, ...]],
     ) -> str | None:
         compound_key: str | None = None
         for key in key_fields:
-            if hasattr(entity, key):
-                key_part = getattr(entity, key)
-                if key_part is not None:
-                    if compound_key is None:
-                        compound_key = str(key_part)
-                    else:
-                        compound_key = f"{compound_key}|{key_part}"
+            if isinstance(key, tuple):
+                for sub_key in key:
+                    if hasattr(entity, sub_key):
+                        key_part = getattr(entity, sub_key)
+                        if key_part is not None:
+                            if compound_key is None:
+                                compound_key = str(key_part)
+                            else:
+                                compound_key = f"{compound_key}|{key_part}"
+                            break
+            else:
+                if hasattr(entity, key):
+                    key_part = getattr(entity, key)
+                    if key_part is not None:
+                        if compound_key is None:
+                            compound_key = str(key_part)
+                        else:
+                            compound_key = f"{compound_key}|{key_part}"
         return compound_key
 
     @staticmethod
@@ -185,7 +195,7 @@ class XTEntityDescriptorManager:
     def merge_descriptors(
         base_descriptors: Any,
         descriptors_to_add: Any,
-        key_fields: list[str],
+        key_fields: list[str | tuple[str, ...]],
         entity_type: type[Any] | None,
     ) -> Any:
         descr1_type = XTEntityDescriptorManager._get_param_type(base_descriptors)
@@ -425,262 +435,38 @@ class XTEntity(TuyaEntity):
         READ_WRITE = "rw"
         WRITE_ONLY = "wr"
 
+    class XTEntitySharedAttributes(StrEnum):
+        IGNORE_OTHER_DP_CODE_HANDLER = "ignore_other_dp_code_handler"
+
     def __init__(self, *args, **kwargs) -> None:
         # This is to catch the super call in case the next class in parent's MRO doesn't have an init method
+        self.dpcode_wrapper: TuyaDPCodeWrapper | None = kwargs.get("dpcode_wrapper")
+        if "dpcode_wrapper" in kwargs:
+            kwargs.pop("dpcode_wrapper")
         try:
             super().__init__(*args, **kwargs)
         except Exception:
             # In case we have an error, do nothing
             pass
 
-    @overload
-    def find_dpcode(
-        self,
-        dpcodes: (
-            str
-            | XTDPCode
-            | tuple[XTDPCode, ...]
-            | TuyaDPCode
-            | tuple[TuyaDPCode, ...]
-            | None
-        ),
-        *,
-        prefer_function: bool = False,
-        dptype: Literal[TuyaDPType.ENUM],
-        only_function: bool = False,
-    ) -> TuyaEnumTypeData | None: ...
-
-    @overload
-    def find_dpcode(
-        self,
-        dpcodes: (
-            str
-            | XTDPCode
-            | tuple[XTDPCode, ...]
-            | TuyaDPCode
-            | tuple[TuyaDPCode, ...]
-            | None
-        ),
-        *,
-        prefer_function: bool = False,
-        dptype: Literal[TuyaDPType.INTEGER],
-        only_function: bool = False,
-    ) -> TuyaIntegerTypeData | None: ...
-
-    @overload
-    def find_dpcode(
-        self,
-        dpcodes: (
-            str
-            | XTDPCode
-            | tuple[XTDPCode, ...]
-            | TuyaDPCode
-            | tuple[TuyaDPCode, ...]
-            | None
-        ),
-        *,
-        prefer_function: bool = False,
-        only_function: bool = False,
-    ) -> TuyaDPCode | None: ...
-
-    @overload
-    def find_dpcode(
-        self,
-        dpcodes: (
-            str
-            | XTDPCode
-            | tuple[XTDPCode, ...]
-            | TuyaDPCode
-            | tuple[TuyaDPCode, ...]
-            | None
-        ),
-        *,
-        prefer_function: bool = False,
-        dptype: TuyaDPType | None = None,
-        only_function: bool = False,
-    ) -> TuyaDPCode | TuyaEnumTypeData | TuyaIntegerTypeData | None: ...
-
-    def find_dpcode(
-        self,
-        dpcodes: (
-            str
-            | XTDPCode
-            | tuple[XTDPCode, ...]
-            | TuyaDPCode
-            | tuple[TuyaDPCode, ...]
-            | None
-        ),
-        *,
-        prefer_function: bool = False,
-        dptype: TuyaDPType | None = None,
-        only_function: bool = False,
-    ) -> str | XTDPCode | TuyaDPCode | TuyaEnumTypeData | TuyaIntegerTypeData | None:
-        if only_function:
-            return self._find_dpcode(
-                dpcodes=dpcodes,
-                prefer_function=prefer_function,
-                dptype=dptype,
-                only_function=only_function,
-            )
+    def get_type_information(self) -> TuyaDPCodeTypeInformationWrapper | None:
+        if self.dpcode_wrapper is None:
+            return None
         try:
-            if dpcodes is None:
-                return None
-            elif not isinstance(dpcodes, tuple):
-                dpcodes = (TuyaDPCode(dpcodes),)
-            else:
-                dpcodes = (TuyaDPCode(dpcodes),)
-            if dptype is TuyaDPType.ENUM:
-                return super(XTEntity, self).find_dpcode(
-                    dpcodes=dpcodes, prefer_function=prefer_function, dptype=dptype
-                )
-            elif dptype is TuyaDPType.INTEGER:
-                return super(XTEntity, self).find_dpcode(
-                    dpcodes=dpcodes, prefer_function=prefer_function, dptype=dptype
-                )
-            else:
-                return dpcodes[0]
+            type_information = getattr(self.dpcode_wrapper, "type_information")
+            if type_information is not None:
+                return type_information
         except Exception:
-            """Find a matching DP code available on for this device."""
-            return self._find_dpcode(
-                dpcodes=dpcodes,
-                prefer_function=prefer_function,
-                dptype=dptype,
-                only_function=only_function,
-            )
-
-    def _find_dpcode(
-        self,
-        dpcodes: (
-            str
-            | tuple[str, ...]
-            | XTDPCode
-            | tuple[XTDPCode, ...]
-            | TuyaDPCode
-            | tuple[TuyaDPCode, ...]
-            | None
-        ),
-        *,
-        prefer_function: bool = False,
-        dptype: TuyaDPType | None = None,
-        only_function: bool = False,
-    ) -> str | XTDPCode | TuyaDPCode | TuyaEnumTypeData | TuyaIntegerTypeData | None:
-        if dpcodes is None:
-            return None
-
-        if not isinstance(dpcodes, tuple):
-            dpcodes = (dpcodes,)
-
-        order = ["status_range", "function"]
-        if prefer_function:
-            order = ["function", "status_range"]
-        if only_function:
-            order = ["function"]
-
-        # When we are not looking for a specific datatype, we can append status for
-        # searching
-        if not dptype:
-            order.append("status")
-
-        for dpcode in dpcodes:
-            for key in order:
-                if dpcode not in getattr(self.device, key):
-                    continue
-                if (
-                    dptype == TuyaDPType.ENUM
-                    and getattr(self.device, key)[dpcode].type == TuyaDPType.ENUM
-                ):
-                    if not (
-                        enum_type := TuyaEnumTypeData.from_json(
-                            dpcode,  # type: ignore
-                            getattr(self.device, key)[dpcode].values,
-                        )
-                    ):
-                        continue
-                    return enum_type
-
-                if (
-                    dptype == TuyaDPType.INTEGER
-                    and getattr(self.device, key)[dpcode].type == TuyaDPType.INTEGER
-                ):
-                    if not (
-                        integer_type := TuyaIntegerTypeData.from_json(
-                            dpcode,  # type: ignore
-                            getattr(self.device, key)[dpcode].values,
-                        )
-                    ):
-                        continue
-                    return integer_type
-
-                if dptype not in (TuyaDPType.ENUM, TuyaDPType.INTEGER):
-                    return dpcode
-
+            pass
         return None
 
-    def get_dptype(
-        self,
-        dpcode: XTDPCode | TuyaDPCode | None,
-        device: sc.XTDevice | None = None,
-        *,
-        prefer_function: bool = False,
-    ) -> TuyaDPType | None:
-        """Find a matching DPType type information for this device DPCode."""
-        if dpcode is None:
-            return None
-        if device is None:
-            return self.get_dptype_old(dpcode, prefer_function=prefer_function)
-        lookup_tuple = (
-            (device.function, device.status_range)
-            if prefer_function
-            else (device.status_range, device.function)
-        )
-        for device_specs in lookup_tuple:
-            if current_definition := device_specs.get(dpcode):
-                current_type = current_definition.type
-                if current_type is not None:
-                    try:
-                        return TuyaDPType(current_type)
-                    except ValueError:
-                        # Sometimes, we get ill-formed DPTypes from the cloud,
-                        # this fixes them and maps them to the correct DPType.
-                        return TUYA_DPTYPE_MAPPING.get(current_type)
-        return None
-    
-    def get_dptype_old(
-        self, dpcode: XTDPCode | TuyaDPCode | None, *, prefer_function: bool = False
-    ) -> TuyaDPType | None:
-        """Find a matching DPCode data type available on for this device."""
-        if dpcode is None:
-            return None
-
-        order = ["status_range", "function"]
-        if prefer_function:
-            order = ["function", "status_range"]
-        for key in order:
-            if dpcode in getattr(self.device, key):
-                current_type = getattr(self.device, key)[dpcode].type
-                try:
-                    return TuyaDPType(current_type)
-                except ValueError:
-                    # Sometimes, we get ill-formed DPTypes from the cloud,
-                    # this fixes them and maps them to the correct DPType.
-                    return TUYA_DPTYPE_MAPPING.get(current_type)
-
+    def get_dptype_from_dpcode_wrapper(self) -> TuyaDPType | None:
+        if type_information := self.get_type_information():
+            return type_information.DPTYPE
         return None
 
     @staticmethod
-    def determine_dptype(type) -> TuyaDPType | None:
-        """Determine the DPType.
-
-        Sometimes, we get ill-formed DPTypes from the cloud,
-        this fixes them and maps them to the correct DPType.
-        """
-        try:
-            return TuyaDPType(type)
-        except ValueError:
-            return TUYA_DPTYPE_MAPPING.get(type)
-
-    @staticmethod
-    def mark_overriden_entities_as_disables(hass: HomeAssistant, device: sc.XTDevice):
+    def mark_overriden_entities_as_disabled(hass: HomeAssistant, device: sc.XTDevice):
         device_registry = dr.async_get(hass)
         entity_registry = er.async_get(hass)
         hass_device = device_registry.async_get_device(
@@ -780,7 +566,8 @@ class XTEntity(TuyaEntity):
         description: EntityDescription,
         first_pass: bool,
         externally_managed_dpcodes: list[str] = [],
-        key_fields: list[str] | None = None,
+        key_fields: list[str | tuple[str, ...]] | None = None,
+        multi_manager: mm.MultiManager | None = None,
     ) -> bool:
         result, dpcode = XTEntity._supports_description(
             device,
@@ -803,12 +590,12 @@ class XTEntity(TuyaEntity):
 
     @staticmethod
     def _get_description_dpcode(description: EntityDescription) -> str:
-        import custom_components.xtend_tuya.binary_sensor as XTBinarySensor
-
         dpcode = description.key
-        if isinstance(description, XTBinarySensor.XTBinarySensorEntityDescription):
-            if dpcode is None and description.dpcode is not None:
-                dpcode = description.dpcode
+        if hasattr(description, "dpcode"):
+            new_dpcode = getattr(description, "dpcode")
+            if new_dpcode is not None:
+                dpcode = new_dpcode
+
         return dpcode
 
     @staticmethod
@@ -818,15 +605,23 @@ class XTEntity(TuyaEntity):
         description: EntityDescription,
         first_pass: bool,
         externally_managed_dpcodes: list[str],
-        key_fields: list[str] | None = None,
+        key_fields: list[str | tuple[str, ...]] | None = None,
     ) -> tuple[bool, str]:
         dpcode = XTEntity._get_description_dpcode(description)
         compound_key = None
+        ignore_other_dp_code_handler: bool = getattr(
+            description,
+            XTEntity.XTEntitySharedAttributes.IGNORE_OTHER_DP_CODE_HANDLER,
+            False,
+        )
         if key_fields is not None:
             compound_key = XTEntityDescriptorManager.get_compound_key(
                 description, key_fields
             )
-        if XTEntity.is_dpcode_handled(device, platform, dpcode) is True:
+        if (
+            XTEntity.is_dpcode_handled(device, platform, dpcode) is True
+            and ignore_other_dp_code_handler is False
+        ):
             if (
                 compound_key is None
                 or XTEntity.is_dpcode_handled(device, platform, compound_key) is True

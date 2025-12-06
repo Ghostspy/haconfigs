@@ -13,6 +13,7 @@ scene: !include scenes.yaml
 input_boolean: !include input_boolean.yaml
 binary_sensor: !include binary_sensor.yaml
 sensor: !include sensor.yaml
+template: !include template.yaml
 openhasp: !include openhasp.yaml
 
 logger:

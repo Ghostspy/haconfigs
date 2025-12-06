@@ -22,17 +22,16 @@
     - "date_time_iso"
     - "time_date"
     - "time_utc"
-
 # ================================
 # Battery Level (%)
 # ================================
-- platform: template
-  sensors:
-    battery_level:
-      friendly_name: "Battery Level"
-      unit_of_measurement: "%"
-      device_class: battery
-      value_template: >
-        {% set v = (states('sensor.battery_voltage') | float) %}
-        {% set percent = ((v - 3.0) / (4.2 - 3.0) * 100) %}
-        {{ [percent|int, 100]|min }}
+# - platform: template
+#   sensors:
+#     battery_level:
+#       friendly_name: "Battery Level"
+#       unit_of_measurement: "%"
+#       device_class: battery
+#       value_template: >
+#         {% set v = (states('sensor.battery_voltage') | float) %}
+#         {% set percent = ((v - 3.0) / (4.2 - 3.0) * 100) %}
+#         {{ [percent|int, 100]|min }}

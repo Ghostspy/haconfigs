@@ -126,16 +126,27 @@ i2c:
 # Logger (set to VERY_VERBOSE for detailed debugging)
 logger:
   baud_rate: 115200
-  level: VERY_VERBOSE  # Keep high verbosity to debug crash
+  # level: VERY_VERBOSE  # Keep high verbosity to debug crash
 
 ### Images
 image:
-  - file: "images/background.png"
+  - file: "images/encom.png"
     id: background
-    # resize: 480x320
-    # type: RGB565
     resize: 800x480
-    type: RGB
+    type: RGB565
+  # ENCOM weather icons
+  - file: "images/weather_clear_encom.png"
+    id: img_weather_clear
+    resize: 64x64
+    type: RGB565
+  - file: "images/weather_cloudy_encom.png"
+    id: img_weather_cloudy
+    resize: 64x64
+    type: RGB565
+  - file: "images/weather_rain_encom.png"
+    id: img_weather_rain
+    resize: 64x64
+    type: RGB565    
 
 # Colors (from working config)
 color:
@@ -215,6 +226,17 @@ display:
         - 47
         - 21
 
+sensor:
+  - platform: homeassistant
+    id: ha_temperature
+    entity_id: weather.home
+    attribute: temperature
+
+text_sensor:
+  - platform: homeassistant
+    id: ha_condition
+    entity_id: weather.home
+
 binary_sensor:
   - platform: homeassistant
     id: master_bedroom_light_state
@@ -234,6 +256,24 @@ binary_sensor:
             id: master_bedroom_tv_button
             state:
               checked: !lambda return x;
+  - platform: homeassistant
+    id: master_closet_state
+    entity_id: light.master_closet_light
+    on_state:
+      then:
+        - lvgl.widget.update:
+            id: master_closet_button
+            state:
+              checked: !lambda return x;              
+  - platform: homeassistant
+    id: extra_bedroom_light_state
+    entity_id: switch.extra_bedroom_light
+    on_state:
+      then:
+        - lvgl.widget.update:
+            id: extra_bedroom_button
+            state:
+              checked: !lambda return x;              
 
 # Touchscreen (updated to match new config)
 touchscreen:
@@ -247,13 +287,13 @@ touchscreen:
   on_touch:
     - lambda: |-
         ESP_LOGI("Touch", "Touch detected at x=%d, y=%d", touch.x, touch.y);
-  on_update:
-    - lambda: |-
-        for (auto touch: touches)  {
-            if (touch.state <= 2) {
-              ESP_LOGI("Touch points:", "id=%d x=%d, y=%d x.raw=%d, y.raw=%d", touch.id, touch.x, touch.y, touch.x_raw, touch.y_raw);
-            }
-        }
+  # on_update:
+  #   - lambda: |-
+  #       for (auto touch: touches)  {
+  #           if (touch.state <= 2) {
+  #             ESP_LOGI("Touch points:", "id=%d x=%d, y=%d x.raw=%d, y.raw=%d", touch.id, touch.x, touch.y, touch.x_raw, touch.y_raw);
+  #           }
+  #       }
   on_release:
     then:
       - if:
@@ -268,6 +308,8 @@ lvgl:
   touchscreens: my_touch
   buffer_size: 10%
   disp_bg_image: background
+  disp_bg_opa: COVER      # full opacity for the background image
+  bg_opa: TRANSP          # default widget/page background = transparent  
   color_depth: 16
   theme:
     arc:
@@ -315,12 +357,69 @@ lvgl:
 
   pages:
     - id: main_page
+      scrollbar_mode: "Off"
+      bg_opa: TRANSP      # 👈 explicitly transparent page
+      on_swipe_left:
+        then:
+          - lvgl.page.show: basement_page    
       widgets:
+        - obj:
+            id: weather_card
+            x: 20
+            y: 10
+            width: 350
+            height: 115
+            radius: 10
+            bg_color: 0x000000
+            bg_opa: 60%            # translucent ENCOM panel
+            border_color: 0x00AFFF # ENCOM neon blue
+            border_width: 3
+            pad_all: 8
+            widgets:
+
+              # # Title
+              # - label:
+              #     id: weather_title_label
+              #     text: "ENCOM WEATHER"
+              #     x: 5
+              #     y: 5
+              #     text_color: 0x00AFFF
+
+              # Weather Icon (left)
+              - image:
+                  id: weather_icon
+                  x: 10
+                  y: 10
+                  src: img_weather_clear
+
+              # Temperature
+              - label:
+                  id: weather_temp_label
+                  x: 80
+                  y: 35
+                  text: "--°"
+                  text_color: 0xFFFFFF
+
+              # Condition (Cloudy, Sunny, etc.)
+              - label:
+                  id: weather_condition_label
+                  x: 150
+                  y: 35
+                  text: "Loading..."
+                  text_color: 0x7FE0FF
+
+              # Humidity (right side)
+              - label:
+                  id: weather_hum_label
+                  x: 275
+                  y: 35
+                  text: "--% RH"
+                  text_color: 0x7FE0FF
         - button:
             id: master_bedroom_light_button
             checkable: true
             x: 20
-            y: 20
+            y: 140
             width: 100
             height: 100
             radius: 10
@@ -343,7 +442,7 @@ lvgl:
             id: master_bedroom_tv_button
             checkable: true
             x: 140
-            y: 20
+            y: 140
             width: 100
             height: 100
             radius: 10
@@ -361,7 +460,37 @@ lvgl:
                   align: center
                   long_mode: wrap
                   text_align: center    # Centers each wrapped line
+                  width: 80            # Slightly smaller than button for padding                      
+        - button:
+            id: master_closet_button
+            checkable: true
+            x: 260
+            y: 140
+            width: 100
+            height: 100
+            radius: 10
+            bg_color: my_gray
+            text_color: my_white
+            on_click:
+              then:
+                - homeassistant.action:
+                    action: switch.toggle
+                    data:
+                      entity_id: switch.shellyplus1_8813bf9faff8
+            widgets:
+              - label:
+                  text: "Master Bedroom Closest Light"
+                  align: center
+                  long_mode: wrap
+                  text_align: center    # Centers each wrapped line
                   width: 80            # Slightly smaller than button for padding
+    - id: basement_page
+      bg_opa: TRANSP      # 👈 explicitly transparent page
+      scrollbar_mode: "Off"
+      on_swipe_right:
+        then:
+          - lvgl.page.show: main_page 
+      widgets:                
         - button:
             id: extra_bedroom_button
             checkable: true
@@ -384,5 +513,4 @@ lvgl:
                   align: center
                   long_mode: wrap
                   text_align: center    # Centers each wrapped line
-                  width: 80            # Slightly smaller than button for padding
-
+                  width: 80            # Slightly smaller than button for padding    

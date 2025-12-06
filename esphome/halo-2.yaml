@@ -1,6 +1,6 @@
 esphome:
   name: halo-2
-  friendly_name: Halo-2
+  friendly_name: halo-2
 
 # OTA
 ota:
@@ -13,7 +13,7 @@ wifi:
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
-    ssid: "Halo-2 Fallback Hotspot"
+    ssid: "halo-2 Fallback Hotspot"
     password: "co1yTh8bBJAT"
 
 captive_portal:
@@ -298,6 +298,71 @@ script:
               snprintf(time_buf, sizeof(time_buf), "%2d:%02d%s", hour_12, now.minute, is_pm ? "PM" : "AM");
             }
             return time_buf;
+  - id: update_aqi_led
+    parameters:
+      aqi_value: float
+    then:
+      - if:
+          condition:
+            lambda: "return aqi_value <= 50;"
+          then:
+            - light.turn_on:
+                id: rgb_light
+                brightness: 50%
+                red: 46%
+                green: 98%
+                blue: 46%
+          else:
+            - if:
+                condition:
+                  lambda: "return aqi_value <= 100;"
+                then:
+                  - light.turn_on:
+                      id: rgb_light
+                      brightness: 50%
+                      red: 100%
+                      green: 100%
+                      blue: 0%
+                else:
+                  - if:
+                      condition:
+                        lambda: "return aqi_value <= 150;"
+                      then:
+                        - light.turn_on:
+                            id: rgb_light
+                            brightness: 50%
+                            red: 100%
+                            green: 65%
+                            blue: 0%
+                      else:
+                        - if:
+                            condition:
+                              lambda: "return aqi_value <= 200;"
+                            then:
+                              - light.turn_on:
+                                  id: rgb_light
+                                  brightness: 50%
+                                  red: 100%
+                                  green: 0%
+                                  blue: 0%
+                            else:
+                              - if:
+                                  condition:
+                                    lambda: "return aqi_value <= 300;"
+                                  then:
+                                    - light.turn_on:
+                                        id: rgb_light
+                                        brightness: 50%
+                                        red: 50%
+                                        green: 0%
+                                        blue: 50%
+                                  else:
+                                    - light.turn_on:
+                                        id: rgb_light
+                                        brightness: 50%
+                                        red: 50%
+                                        green: 0%
+                                        blue: 0%
 
 number:
   - platform: template
@@ -690,6 +755,28 @@ sensor:
                 static char buffer[10];
                 snprintf(buffer, sizeof(buffer), " %d", (int)aqi);
                 return buffer;
+          - script.execute:
+              id: update_aqi_led
+              aqi_value: !lambda |-
+                float val = x;
+                // Calculate AQI same as before
+                float aqi = 0.0;
+                if (val <= 9.0) {
+                  aqi = ((50.0 - 0.0) / (9.0 - 0.0)) * (val - 0.0) + 0.0;
+                } else if (val <= 35.4) {
+                  aqi = ((100.0 - 51.0) / (35.4 - 9.1)) * (val - 9.1) + 51.0;
+                } else if (val <= 55.4) {
+                  aqi = ((150.0 - 101.0) / (55.4 - 35.5)) * (val - 35.5) + 101.0;
+                } else if (val <= 125.4) {
+                  aqi = ((200.0 - 151.0) / (125.4 - 55.5)) * (val - 55.5) + 151.0;
+                } else if (val <= 225.4) {
+                  aqi = ((300.0 - 201.0) / (225.4 - 125.5)) * (val - 125.5) + 201.0;
+                } else if (val <= 500.4) {
+                  aqi = ((500.0 - 301.0) / (500.4 - 250.5)) * (val - 250.5) + 301.0;
+                } else {
+                  aqi = 500.0;
+                }
+                return aqi;
 
           - lvgl.widget.update:
               id: aqi_widget
@@ -767,9 +854,9 @@ sensor:
                 - lvgl.label.update:
                     id: temperature_units
                     text: !lambda |-
-                      if(id(display_temperature_unit).state == "Fahrenheit")
+                      if(id(display_temperature_unit).current_option() == "Fahrenheit")
                         return "\u00B0F";
-                      else if(id(display_temperature_unit).state == "Kelvin")
+                      else if(id(display_temperature_unit).current_option() == "Kelvin")
                         return "K";
                       return "\u00B0C";
                 - globals.set:
@@ -779,9 +866,9 @@ sensor:
               id: temperature_value
               text: !lambda |-
                 static char buffer[10];
-                if(id(display_temperature_unit).state == "Fahrenheit")
+                if(id(display_temperature_unit).current_option() == "Fahrenheit")
                   snprintf(buffer, sizeof(buffer), "%.01f", (x * 9.0 / 5.0) + 32.0);
-                else if(id(display_temperature_unit).state == "Kelvin")
+                else if(id(display_temperature_unit).current_option() == "Kelvin")
                   snprintf(buffer, sizeof(buffer), "%.01f", x + 273.15);
                 else
                   snprintf(buffer, sizeof(buffer), "%.01f", x);
@@ -994,7 +1081,10 @@ lvgl:
   pages:            
     - id: main_page
       bg_color: my_black
-      scrollbar_mode: "OFF"
+      scrollbar_mode: "Off"
+      on_swipe_left:
+        then:
+          - lvgl.page.show: info_page
       widgets:
         - image:
             id: ym_image          
@@ -1516,3 +1606,59 @@ lvgl:
             x: -2
             y: 299
             text: "%"
+    - id: info_page
+      bg_color: my_black
+      scrollbar_mode: "Off"
+      on_swipe_right:
+        then:
+          - lvgl.page.show: main_page
+      widgets:
+        - image:
+            id: ym_image_info          
+            src: ym_logo
+            align: CENTER
+            x: 80
+            y: -309
+        - label:
+            id: timeVal_info
+            align: LEFT_MID
+            text_font: montserrat_18
+            text_color: my_white
+            x: 2
+            y: -309
+            text: "00:00AM"
+        - label:
+            id: wifi_stat_info
+            align: CENTER
+            text_font: montserrat_18
+            text_color: my_gray
+            x: 42
+            y: -309
+            text: "\uF1EB"
+# AQI box
+        - obj:
+            id: aqi_widget_info
+            x: 0
+            y: 24
+            width: 180
+            height: 42
+            bg_color: 0x76fa76
+            border_width: 0
+        - label:
+            id: aqi_label_info
+            align: LEFT_MID
+            text_font: montserrat_28
+            text_color: my_black
+            long_mode: WRAP
+            x: 2
+            y: -275
+            text: "AQI:"
+        - label:
+            id: aqi_value_info
+            align: LEFT_MID
+            text_font: montserrat_28
+            text_color: my_black
+            long_mode: WRAP
+            x: 90
+            y: -275
+            text: "000" 

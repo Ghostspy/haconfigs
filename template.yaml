@@ -1,0 +1,13 @@
+template:
+  - binary_sensor:
+      - name: mailbox_battery_low
+        state: "{{ states('sensor.mailbox_battery_mqtt') | float < 6.00 }}"
+        device_class: battery
+  - sensor:
+      - unit_of_measurement: "%"
+        device_class: BATTERY
+        default_entity_id: sensor.battery_level
+        name: Battery Level
+        state:
+          "{% set v = (states('sensor.battery_voltage') | float) %} {% set percent
+          = ((v - 3.0) / (4.2 - 3.0) * 100) %} {{ [percent|int, 100]|min }}"
